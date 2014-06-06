@@ -7,6 +7,7 @@
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Reflection;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Threading;
@@ -16,6 +17,7 @@
     using Build.DataLayer.Enum;
     using Build.DataLayer.Model;
 
+    using DragDropPhoneApp.Service;
     using DragDropPhoneApp.ViewModel;
 
     using Microsoft.Phone.Controls;
@@ -59,6 +61,7 @@
             return "";
         }
 
+        private static int imagesDownloaded = 0;
         public static  void DownloadImage(string imgActivity)
         {
 
@@ -67,10 +70,28 @@
             client.Headers["Accept"] = "application/json";
             client.DownloadStringCompleted += (sender, args) =>
                 {
-                    var realtys = JsonConvert.DeserializeObject<Imag>(args.Result);
-                    if (realtys != null)
+
+                    Imag imag =null;
+                    try
                     {
-                       
+                        var z = imgActivity;
+                        var b = z;
+                         imag = JsonConvert.DeserializeObject<Imag>(args.Result);
+                  
+                    }
+                    catch(TargetInvocationException)
+                    {
+                        imagesDownloaded++;
+                    }
+
+                    if (imag != null && imag.Content != null && imag.Content.Length != 0)
+                    {
+                        DataService.SaveImage(imag.ActivityType.ToString(), imag.Content);
+                        if (App.DataContext.DownloadImageUnderNumberCompleted.ContainsKey(imagesDownloaded))
+                        {
+                            App.DataContext.DownloadImageUnderNumberCompleted[imagesDownloaded] = true;
+                            imagesDownloaded++;
+                        }
                     }
 
                 };

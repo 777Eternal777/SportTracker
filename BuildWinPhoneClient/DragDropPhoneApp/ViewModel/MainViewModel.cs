@@ -191,11 +191,12 @@ namespace DragDropPhoneApp.ViewModel
                         });
             }
         }
+        public Dictionary<int, bool> DownloadImageUnderNumberCompleted = new Dictionary<int, bool>(); 
 
         #endregion
 
         #region Public Methods and Operators
-
+        
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;

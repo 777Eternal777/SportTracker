@@ -77,19 +77,19 @@
         public static List<string> GetImagesNamesList(bool withPath)
         {
             IsolatedStorageFile storeFile = IsolatedStorageFile.GetUserStoreForApplication();
-            string imageFolder = Consts.ImageFolder;
+         //   string imageFolder = Consts.ImageFolder;
             if (!storeFile.DirectoryExists(Consts.ImageFolderSlash))
             {
                 storeFile.CreateDirectory(Consts.ImageFolderSlash);
             }
 
-            List<string> fileList = new List<string>(storeFile.GetFileNames(Consts.ImageFolderSlash));
+            List<string> fileList = new List<string>(storeFile.GetFileNames());
             List<string> imgNameList = new List<string>();
             if (withPath)
             {
                 foreach (string file in fileList)
                 {
-                    imgNameList.Add(Path.Combine(imageFolder, file));
+                    imgNameList.Add(file);//Path.Combine(imageFolder, file)
                 }
             }
             else
@@ -123,7 +123,7 @@
 
             return stream;
         }
-        private static bool SaveImage(string filename, byte[] byteContent)
+        public static bool SaveImage(string filename, byte[] byteContent)
         {
             if (filename == null || byteContent.Length == 0)
             {
@@ -132,14 +132,18 @@
 
             using (var isoStore = IsolatedStorageFile.GetUserStoreForApplication())
             {
+                filename = filename + ".jpg";
                 if (isoStore.FileExists(filename))
                 {
                     return false;
 
                 }
-                IsolatedStorageFileStream stream1 = isoStore.CreateFile(filename);
+                using (IsolatedStorageFileStream stream1 = isoStore.CreateFile(filename))
+                {
 
-                stream1.Write(byteContent, 0, byteContent.Length);
+                    stream1.Write(byteContent, 0, byteContent.Length);
+                }
+            
 
                 return true;
             }
