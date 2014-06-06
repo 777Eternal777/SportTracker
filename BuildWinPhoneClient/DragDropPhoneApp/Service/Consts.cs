@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DragDropPhoneApp.Service
+{
+    using Build.DataLayer.Enum;
+
+    public static class Consts
+    {
+        #region Static Fields
+
+        public static string ImageFolder = @"\Images";
+
+        public static string ImageFolderSlash = "Images/";
+
+        public static Dictionary<ActivityType, string> activityImageNames = new Dictionary<ActivityType, string>();
+        #endregion
+    }
+
+}
