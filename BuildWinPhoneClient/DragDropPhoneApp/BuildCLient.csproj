@@ -119,7 +119,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AppResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Context\Datacontext.cs" />
     <Compile Include="Helpers\AlphaKeyGroup.cs" />
     <Compile Include="Helpers\Indicator.cs" />
     <Compile Include="IoC\ServiceLocator.cs" />

@@ -77,7 +77,6 @@
         public BuildCategories BuildCategory { get; set; }
         [JsonProperty]
         public Users Owner { get; set; }
-        [JsonProperty]
-        public List<ImageAttachments> Photos { get; set; }
+      
     }
 }

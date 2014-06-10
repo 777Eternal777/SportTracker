@@ -12,7 +12,7 @@
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Landscape"
     mc:Ignorable="d"
-    shell:SystemTray.IsVisible="True">
+    shell:SystemTray.IsVisible="True" Loaded="PhoneApplicationPage_Loaded">
  <phone:PhoneApplicationPage.Resources>
 
         <phone:JumpListItemBackgroundConverter x:Key="BackgroundConverter"/>

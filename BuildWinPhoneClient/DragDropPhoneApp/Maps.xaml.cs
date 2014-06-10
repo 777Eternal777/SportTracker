@@ -14,6 +14,7 @@ namespace DragDropPhoneApp
     using System.Diagnostics;
     using System.IO.IsolatedStorage;
     using System.Reflection;
+    using System.Threading;
     using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Shapes;
@@ -34,6 +35,8 @@ namespace DragDropPhoneApp
         private bool DestinationRevGeoNow;
 
         private MapOverlay OriginMarker;
+
+        private List<MapOverlay> MapMarkersList = new List<MapOverlay>();
 
         private RouteOptimization optimization = RouteOptimization.MinimizeTime;
 
@@ -63,20 +66,23 @@ namespace DragDropPhoneApp
 
             this.map1.ZoomLevelChanged += this.map1_ZoomLevelChanged;
 
-            this.AddResultToMap(
-                new GeoCoordinate(App.DataContext.CurrentRealty.MapPosX, App.DataContext.CurrentRealty.MapPosY),
-                new GeoCoordinate(App.DataContext.CurrentRealty.MapPosX + 1, App.DataContext.CurrentRealty.MapPosY + 1));
+            //   this.AddResultToMap(
+            //    new GeoCoordinate(App.DataContext.CurrentRealty.MapPosX, App.DataContext.CurrentRealty.MapPosY),
+            //    new GeoCoordinate(App.DataContext.CurrentRealty.MapPosX + 1, App.DataContext.CurrentRealty.MapPosY + 1));
 
             this.geoRev = new ReverseGeocodeQuery();
             this.geoRev.QueryCompleted += this.geoRev_QueryCompleted;
 
             this.geoQ = new RouteQuery();
             this.geoQ.QueryCompleted += this.geoQ_QueryCompleted;
-            StartGeoLoc();
+            this.markerLayer = new MapLayer();
+
+            this.map1.Layers.Add(this.markerLayer);
+            //   StartGeoLoc();
             if (App.DataContext.isInRealtyCreating)
             {
-                this.GetRouteBtn.Visibility = Visibility.Collapsed;
-                this.Submit.Visibility = Visibility.Visible;
+                //   this.GetRouteBtn.Visibility = Visibility.Collapsed;
+                //   this.Submit.Visibility = Visibility.Visible;
             }
         }
 
@@ -109,7 +115,7 @@ namespace DragDropPhoneApp
 
             this.OriginMarker = this.MakeDotMarker(origin, false);
             this.DestinationMarker = this.MakeDotMarker(destination, true);
-          this.map1.SetView(origin,this.map1.ZoomLevel);
+            this.map1.SetView(origin, this.map1.ZoomLevel);
             this.markerLayer = new MapLayer();
             this.map1.Layers.Add(this.markerLayer);
             this.markerLayer.Add(this.OriginMarker);
@@ -119,6 +125,10 @@ namespace DragDropPhoneApp
 
         private void StartGeoQ()
         {
+            if (MapMarkersList.Count < 2)
+            {
+                return;
+            }
             if (this.geoQ.IsBusy)
             {
                 this.geoQ.CancelAsync();
@@ -130,8 +140,11 @@ namespace DragDropPhoneApp
             this.geoQ.TravelMode = this.travelMode;
 
             List<GeoCoordinate> MyWayPoints = new List<GeoCoordinate>();
-            MyWayPoints.Add(this.OriginMarker.GeoCoordinate);
-            MyWayPoints.Add(this.DestinationMarker.GeoCoordinate);
+            foreach (var marker in MapMarkersList)
+            {
+                MyWayPoints.Add(marker.GeoCoordinate);
+            }
+
 
             this.geoQ.Waypoints = MyWayPoints;
             this.geoQ.QueryAsync();
@@ -147,9 +160,9 @@ namespace DragDropPhoneApp
 
         private MapOverlay MakeDotMarker(GeoCoordinate location, bool isDestination)
         {
-            MapOverlay Marker = new MapOverlay();
+            MapOverlay marker = new MapOverlay();
 
-            Marker.GeoCoordinate = location;
+            marker.GeoCoordinate = location;
 
             Ellipse circle = new Ellipse();
             if (isDestination)
@@ -162,17 +175,29 @@ namespace DragDropPhoneApp
                 circle.Fill = new SolidColorBrush(Colors.Yellow);
                 circle.Stroke = new SolidColorBrush(Colors.Red);
             }
-
-            circle.StrokeThickness = 20;
+            Grid grid = new Grid
+                            {
+                                Width = 60,
+                                Height = 60
+                            };
+            TextBlock num = new TextBlock
+                                {
+                                    VerticalAlignment = VerticalAlignment.Center,
+                                    HorizontalAlignment = HorizontalAlignment.Center,
+                                    Text = "1"
+                                };
+            circle.StrokeThickness = 25;
             circle.Opacity = 0.8;
             circle.Height = 50;
             circle.Width = 50;
-          
-            Marker.Content = circle;
-            Marker.PositionOrigin = new Point(0.5, 0.5);
+            grid.Children.Add(circle);
+            grid.Children.Add(num);
+            marker.Content = grid;
+            marker.PositionOrigin = new Point(0.5, 0.5);
             circle.MouseLeftButtonDown += this.textt_MouseLeftButtonDown;
-
-            return Marker;
+            this.markerLayer.Add(marker);
+            this.MapMarkersList.Add(marker);
+            return marker;
         }
 
         private void Start_ReverceGeoCoding(MapOverlay Marker)
@@ -197,32 +222,52 @@ namespace DragDropPhoneApp
 
         private void Touch_FrameReported(object sender, TouchFrameEventArgs e)
         {
-            if (!App.DataContext.isInRealtyCreating)
+
+            TouchPoint tPoint = e.GetPrimaryTouchPoint(this.map1);
+
+            if (tPoint.Action == TouchAction.Down)
             {
-                return;
+                var marker = MakeDotMarker(this.map1.ConvertViewportPointToGeoCoordinate(tPoint.Position), false);
+
+                //this.selectedMarker.GeoCoordinate = this.map1.ConvertViewportPointToGeoCoordinate(tPoint.Position);
+                this.Start_ReverceGeoCoding(this.selectedMarker);
+                StartGeoQ();
             }
 
-            if (this.draggingNow)
-            {
-                TouchPoint tPoint = e.GetPrimaryTouchPoint(this.map1);
 
-                if (tPoint.Action == TouchAction.Move && (this.selectedMarker != null))
-                {
-                    this.selectedMarker.GeoCoordinate = this.map1.ConvertViewportPointToGeoCoordinate(tPoint.Position);
-                    this.Start_ReverceGeoCoding(this.selectedMarker);
-                }
-                else if (tPoint.Action == TouchAction.Up)
-                {
-                    this.selectedMarker = null;
-                    this.draggingNow = false;
-                    this.map1.IsEnabled = true;
-                }
-            }
+            /*       if (!App.DataContext.isInRealtyCreating)
+                   {
+                       return;
+                   }
+
+                   if (this.draggingNow)
+                   {
+                       TouchPoint tPoint = e.GetPrimaryTouchPoint(this.map1);
+
+                       if (tPoint.Action == TouchAction.Move && (this.selectedMarker != null))
+                       {
+                           this.selectedMarker.GeoCoordinate = this.map1.ConvertViewportPointToGeoCoordinate(tPoint.Position);
+                           this.Start_ReverceGeoCoding(this.selectedMarker);
+                       }
+                       else if (tPoint.Action == TouchAction.Up)
+                       {
+                           this.selectedMarker = null;
+                           this.draggingNow = false;
+                           this.map1.IsEnabled = true;
+                       }
+                   }*/
         }
 
+        private int failedQueriesCount = 0;
+
+        private bool allfailed;
         private void geoQ_QueryCompleted(object sender, QueryCompletedEventArgs<Route> e)
         {
-
+            if (allfailed)
+            {
+                this.MapMarkersList.RemoveAt(MapMarkersList.Count-1);
+                allfailed = false;
+            }
             if (this.lastRoute != null)
             {
                 this.map1.RemoveRoute(this.lastRoute);
@@ -241,11 +286,21 @@ namespace DragDropPhoneApp
                 MessageBox.Show(
                     "Distance: " + (myRoute.LengthInMeters / 1000) + " km, Estimated traveltime: "
                     + myRoute.EstimatedDuration);
+                failedQueriesCount = 0;
             }
             catch (TargetInvocationException)
             {
-
-                Debug.WriteLine("wrong data to query");
+                Thread.Sleep(1000);
+                //  Debug.WriteLine("wrong data to query");
+                failedQueriesCount++;
+                if (failedQueriesCount < 5)
+                {
+                    geoQ_QueryCompleted(sender, e);
+                }
+                else
+                {
+                    allfailed = true;
+                }
             }
 
         }
@@ -255,12 +310,12 @@ namespace DragDropPhoneApp
 
 
             string GeoStuff = string.Empty;
-          
+
             if (e.Result.Count() > 0)
             {
                 if (e.Result[0].Information.Address.Street.Length > 0)
                 {
-                    GeoStuff =  e.Result[0].Information.Address.Street;//GeoStuff +
+                    GeoStuff = e.Result[0].Information.Address.Street;//GeoStuff +
 
                     if (e.Result[0].Information.Address.HouseNumber.Length > 0)
                     {

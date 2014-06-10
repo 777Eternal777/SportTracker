@@ -33,7 +33,7 @@
             }
         }
 
-        public static BitmapImage FetchImage(Photo photo)
+        public static BitmapImage FetchImage(Activity photo)
         {
             BitmapImage image = null;
 
@@ -50,23 +50,23 @@
             return image;
         }
 
-        public static Photo GetImage(string imgName)
+        public static Activity GetImage(string imgName)
         {
             DateTime start = new DateTime(2010, 1, 1);
 
-            Photo imageData = new Photo { ImageSource = imgName, Title = imgName, TimeStamp = start };
+            Activity imageData = new Activity { ImageSource = imgName, Title = imgName, TimeStamp = start };
 
             imageData.Image = FetchImage(imageData);
             return imageData;
         }
 
-        public static async Task<List<Photo>> GetImages()
+        public static async Task<List<Activity>> GetImages()
         {
-            List<Photo> imageList = new List<Photo>();
+            List<Activity> imageList = new List<Activity>();
             DateTime start = new DateTime(2010, 1, 1);
             foreach (var imgName in GetImagesNamesList(true))
             {
-                Photo imageData = new Photo { ImageSource = imgName, Title = imgName, TimeStamp = start };
+                Activity imageData = new Activity { ImageSource = imgName, Title = imgName, TimeStamp = start };
                 imageData.Image = FetchImage(imageData);
                 imageList.Add(imageData);
             }
@@ -77,19 +77,19 @@
         public static List<string> GetImagesNamesList(bool withPath)
         {
             IsolatedStorageFile storeFile = IsolatedStorageFile.GetUserStoreForApplication();
-         //   string imageFolder = Consts.ImageFolder;
+          string imageFolder = Consts.ImageFolder;
             if (!storeFile.DirectoryExists(Consts.ImageFolderSlash))
             {
                 storeFile.CreateDirectory(Consts.ImageFolderSlash);
             }
 
-            List<string> fileList = new List<string>(storeFile.GetFileNames());
+            List<string> fileList = new List<string>(storeFile.GetFileNames(Consts.ImageFolderSlash));
             List<string> imgNameList = new List<string>();
             if (withPath)
             {
                 foreach (string file in fileList)
                 {
-                    imgNameList.Add(file);//Path.Combine(imageFolder, file)
+                    imgNameList.Add(Path.Combine(imageFolder, file));//Path.Combine(imageFolder, file)
                 }
             }
             else
@@ -129,16 +129,22 @@
             {
                 throw new ArgumentException("one of parameters is null");
             }
-
+            string imageFolder = Consts.ImageFolder;
+          
             using (var isoStore = IsolatedStorageFile.GetUserStoreForApplication())
             {
+                if (!isoStore.DirectoryExists(Consts.ImageFolderSlash))
+                {
+                    isoStore.CreateDirectory(Consts.ImageFolderSlash);
+                }
+                var file1 = Path.Combine(imageFolder, filename);
                 filename = filename + ".jpg";
-                if (isoStore.FileExists(filename))
+                if (isoStore.FileExists(file1))
                 {
                     return false;
 
                 }
-                using (IsolatedStorageFileStream stream1 = isoStore.CreateFile(filename))
+                using (IsolatedStorageFileStream stream1 = isoStore.CreateFile(file1))
                 {
 
                     stream1.Write(byteContent, 0, byteContent.Length);

@@ -21,14 +21,14 @@ namespace DragDropPhoneApp.ViewModel
     public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         #region Fields
-        private List<Photo> phots;
+        private List<Activity> phots;
         public Users CurrentUser { get; set; }
 
         public List<Realty> realtys;
 
         private bool isLoading;
         public bool isInRealtyCreating;
-        public List<Photo> photos
+        public List<Activity> photos
         {
             get
             {
@@ -53,13 +53,7 @@ namespace DragDropPhoneApp.ViewModel
                                    {
                                        Login = "Login",
                                        Password = "Pass",
-                                       Phone = "Phone",
-                                       Adress = "Address",
-                                       FirstName = "FirstName",
-                                       LastName = "LastName",
-                                       Email = "Emal@asd.ru",
-                                       Patronymic = "Patronymic",
-                                       
+                                      
                                        
                                    };
         }
@@ -76,6 +70,8 @@ namespace DragDropPhoneApp.ViewModel
 
         public Realty CurrentRealty { get; set; }
 
+        public Route CurrentRoute { get; set; }
+        public Activity CurrentActivity { get; set; }
         public List<AlphaKeyGroup<Realty>> GroupedRealtiesForRent
         {
             get
@@ -94,7 +90,7 @@ namespace DragDropPhoneApp.ViewModel
             }
         }
 
-        public List<KeyedList<string, Photo>> GroupedPhotos
+        public List<KeyedList<string, Activity>> GroupedPhotos
         {
             get
             {
@@ -107,9 +103,9 @@ namespace DragDropPhoneApp.ViewModel
                                     orderby photo.TimeStamp
                                     group photo by photo.TimeStamp.ToString("y")
                                         into images
-                                        select new KeyedList<string, Photo>(images);
+                                        select new KeyedList<string, Activity>(images);
 
-                return new List<KeyedList<string, Photo>>(groupedPhotos);
+                return new List<KeyedList<string, Activity>>(groupedPhotos);
             }
         }
         public bool OrderBy

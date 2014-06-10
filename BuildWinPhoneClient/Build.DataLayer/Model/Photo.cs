@@ -7,7 +7,7 @@ namespace Build.DataLayer.Model
 {
     using System.Windows.Media.Imaging;
 
-    public class Photo : ImageCard
+    public class Activity : ImageCard
     {
         #region Public Properties
 

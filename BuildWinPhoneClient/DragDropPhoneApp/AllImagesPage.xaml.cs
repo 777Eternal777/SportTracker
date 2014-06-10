@@ -12,6 +12,7 @@ namespace DragDropPhoneApp
 {
     using Build.DataLayer.Model;
 
+    using DragDropPhoneApp.Service;
     using DragDropPhoneApp.ViewModel;
 
     public partial class AllImagesPage : PhoneApplicationPage
@@ -35,24 +36,33 @@ namespace DragDropPhoneApp
 
         private void ImagesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is LongListSelector)
+            var sendr = sender as LongListSelector;
+           /// return;
+            if (sender !=null)
             {
-                var sendr = sender as LongListSelector;
+               
                 if (sendr.SelectedItem == null)
                 {
                     return;
                 }
-
-                if (sendr.SelectedItem is Photo)
+                var activity = sendr.SelectedItem as Activity;
+                if (activity != null)
                 {
-                  App.DataContext.CurrentRealty.PictureSource = (sendr.SelectedItem as Photo).Image;
-                 
-                    sendr.SelectedItem = null;
-                    this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));
+                    App.DataContext.CurrentActivity = activity;
+
+                    //   App.DataContext.CurrentRealty.PictureSource = (sendr.SelectedItem as Photo).Image;
+
+                    // sendr.SelectedItem = null;
+                        this.NavigationService.Navigate(new Uri("/Maps.xaml", UriKind.Relative));
                 }
             }
         }
 
         #endregion
+
+        private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            App.DataContext.photos = DataService.GetImages().Result;
+        }
     }
 }

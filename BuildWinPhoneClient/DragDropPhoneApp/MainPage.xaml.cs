@@ -44,7 +44,7 @@
             Indicator.setLoadingIndicator(this, "Loading");
 
             App.DataContext.isInRealtyCreating = false;
-            App.DataContext.photos = DataService.GetImages().Result;
+          //  App.DataContext.photos = DataService.GetImages().Result;
         }
 
         private void Register_Click(object sender, RoutedEventArgs e)

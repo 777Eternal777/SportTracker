@@ -35,9 +35,6 @@ namespace DragDropPhoneApp
                 return;
             }
             App.DataContext.CurrentUser.RegisterDateTime = DateTime.Now;
-            App.DataContext.CurrentUser.PaidSeller = true;
-            App.DataContext.CurrentUser.PaidUser = true;
-            App.DataContext.CurrentUser.Activated = true;
             ApiService<Users>.SendPost(App.DataContext.CurrentUser, false);
             MessageBox.Show("Registration successfull");
             this.NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));

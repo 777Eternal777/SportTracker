@@ -5,6 +5,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
@@ -123,11 +124,21 @@
             new CustomProgressBar(this.ContentPanel);
 
             var valuesAsArray = Enum.GetValues(typeof(ActivityType)).Cast<ActivityType>().ToList();
-            foreach (var value in valuesAsArray)
+            var images = DataService.GetImagesNamesList(false);
+            if (images.Count == valuesAsArray.Count)
+            {
+                this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                return;
+            }
+            var imagesToDownload = valuesAsArray.Where(c=> !images.Any(v=>v ==c.ToString() +".jpg"));
+            foreach (var value in imagesToDownload)
             {
 
                 ApiService<Imag>.DownloadImage(value.ToString());
+
+               // Thread.Sleep(1500);
             }
+           this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
             return;
 
             LinearGradientBrush myVerticalGradient = new LinearGradientBrush();
@@ -352,6 +363,7 @@
                 this.Initialize(parent);
                 for (int i = 0; i < 4; i++)
                 {
+
                     if (!App.DataContext.DownloadImageUnderNumberCompleted.ContainsKey(i))
                     App.DataContext.DownloadImageUnderNumberCompleted.Add(i, false);
                 }
@@ -394,7 +406,7 @@
 
             #region Methods
 
-            private int imgDownloaded = 0;
+            private int imgDownloaded ;
             private void AnimateLoad(Color color, GradientStop stop21,int animateNumb)
             {
                 ColorAnimation gradientStopColorAnimation = new ColorAnimation();

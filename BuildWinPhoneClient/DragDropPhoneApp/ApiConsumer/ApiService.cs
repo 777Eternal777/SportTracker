@@ -70,7 +70,6 @@
             client.Headers["Accept"] = "application/json";
             client.DownloadStringCompleted += (sender, args) =>
                 {
-
                     Imag imag =null;
                     try
                     {
@@ -204,7 +203,7 @@
                                 }
 
                                 ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
-                                    new Uri("/RealtyList.xaml", UriKind.Relative));
+                                    new Uri("/AllImagesPage.xaml", UriKind.Relative));
                             });
                 }
                 else
