@@ -9,94 +9,84 @@ namespace DragDropPhoneApp.ApiConsumer
     using System.IO;
     using System.Net;
     using System.Security.Cryptography;
+    using System.Windows;
 
-    class TwitterApi
+    using Build.DataLayer.Model;
+
+    using Microsoft.Phone.Net.NetworkInformation;
+
+    using TweetSharp;
+
+    public static class TwitterApi
     {
-        public void Post()
+        
+
+        private static string AccesToken = "2558909828-qsFXEywYd2xjGo1b9pIANFvMjN2ANAOiSPsp2mp";
+
+        private static string AccesTokenSecret = "29shsDxbFt0Koy17jygoxWeLN7jzapiNLOvki90lDtxIf";
+        private static string ApiKey = "riMI9rvmpxdyQWFAJvxzUsusm";
+
+        private static string APIsecret = "5eqgOqF1Ca2fUSL8MwZaL6F3GW5xlTKLEbHph46HUs0iLrPtL2"; //Keep the "API secret" a secret. This key should never be human-readable in your application.
+        public static void PostMessageToTwitter(string message)
         {
-            /*   var twitter = FluentTwitter.CreateRequest()
-    .AuthenticateAs("USERNAME", "PASSWORD")
-    .Statuses().Update("Hello World!")
-    .AsJson();
-          
-            var response = twitter.Request();  */
+            
+            
+            if (NetworkInterface.GetIsNetworkAvailable())
+            {
+                //Obtain keys by registering your app on https://dev.twitter.com/apps
+                var service = new TwitterService(ApiKey, APIsecret);
+                service.AuthenticateWith(AccesToken, AccesTokenSecret);
+              
+                service.SendTweet(new SendTweetOptions
+                                      {
+                                          Status = message,
+                                          
+                                      },
+                    (status, response) =>
+                        {
+                           
+                        } );
+       //   service.SendTweetWithMedia(new SendTweetWithMediaOptions
+                                       //       {
+                                              //    Images = 
+                                      //        } );
+                //ScreenName is the profile name of the twitter user.
+              
+            }
+            else
+            {
+
+            //    MessageBox.Show("Please check your internet connestion.");
+            }
         }
-        private void PostMessageToTwitter(string message)
-        {/*
-            //The facebook json url to update the status
-            string facebookURL = "http://api.twitter.com/1.1/statuses/update.json";
+        public static void PostMessageWithImageToTwitter(string message, Activity activity)
+        {
 
-            //set the access tokens (REQUIRED)
-            string oauth_consumer_key = "Enter customer key here";
-            string oauth_consumer_secret = "Enter customer secret here";
-            string oauth_token = "Enter access token";
-            string oauth_token_secret = "Enter access token secret";
 
-            // set the oauth version and signature method
-            string oauth_version = "1.0";
-            string oauth_signature_method = "HMAC-SHA1";
-
-            // create unique request details
-            string oauth_nonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
-            System.TimeSpan timeSpan = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc));
-            string oauth_timestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString();
-
-            // create oauth signature
-            string baseFormat = "oauth_consumer_key={0}&oauth_nonce={1}&oauth_signature_method={2}" + "&oauth_timestamp={3}&oauth_token={4}&oauth_version={5}&status={6}";
-
-            string baseString = string.Format(
-                baseFormat,
-                oauth_consumer_key,
-                oauth_nonce,
-                oauth_signature_method,
-                oauth_timestamp, oauth_token,
-                oauth_version,
-                Uri.EscapeDataString(message)
-            );
-
-            string oauth_signature = null;
-            using (HMACSHA1 hasher = new HMACSHA1(ASCIIEncoding.ASCII.GetBytes(Uri.EscapeDataString(oauth_consumer_secret) + "&" + Uri.EscapeDataString(oauth_token_secret))))
+            if (NetworkInterface.GetIsNetworkAvailable())
             {
-                oauth_signature = Convert.ToBase64String(hasher.ComputeHash(ASCIIEncoding.ASCII.GetBytes("POST&" + Uri.EscapeDataString(facebookURL) + "&" + Uri.EscapeDataString(baseString))));
+                //Obtain keys by registering your app on https://dev.twitter.com/apps
+                var service = new TwitterService(ApiKey, APIsecret);
+                service.AuthenticateWith(AccesToken, AccesTokenSecret);
+
+             
+                 service.SendTweetWithMedia(new SendTweetWithMediaOptions
+                                                {
+                                                    Status = message,
+
+                                                },
+                     (status, response) =>
+                         {
+                             
+                         });
+                //ScreenName is the profile name of the twitter user.
+
             }
-
-            // create the request header
-            string authorizationFormat = "OAuth oauth_consumer_key=\"{0}\", oauth_nonce=\"{1}\", " + "oauth_signature=\"{2}\", oauth_signature_method=\"{3}\", " + "oauth_timestamp=\"{4}\", oauth_token=\"{5}\", " + "oauth_version=\"{6}\"";
-
-            string authorizationHeader = string.Format(
-                authorizationFormat,
-                Uri.EscapeDataString(oauth_consumer_key),
-                Uri.EscapeDataString(oauth_nonce),
-                Uri.EscapeDataString(oauth_signature),
-                Uri.EscapeDataString(oauth_signature_method),
-                Uri.EscapeDataString(oauth_timestamp),
-                Uri.EscapeDataString(oauth_token),
-                Uri.EscapeDataString(oauth_version)
-            );
-
-            HttpWebRequest objHttpWebRequest = (HttpWebRequest)WebRequest.Create(facebookURL);
-            objHttpWebRequest.Headers.Add("Authorization", authorizationHeader);
-            objHttpWebRequest.Method = "POST";
-            objHttpWebRequest.ContentType = "application/x-www-form-urlencoded";
-            using (Stream objStream = objHttpWebRequest.GetRequestStream())
+            else
             {
-                byte[] content = ASCIIEncoding.ASCII.GetBytes("status=" + Uri.EscapeDataString(message));
-                objStream.Write(content, 0, content.Length);
+
+                //    MessageBox.Show("Please check your internet connestion.");
             }
-
-            var responseResult = "";
-            try
-            {
-                //success posting
-                WebResponse objWebResponse = objHttpWebRequest.GetResponse();
-                StreamReader objStreamReader = new StreamReader(objWebResponse.GetResponseStream());
-                responseResult = objStreamReader.ReadToEnd().ToString();
-            }
-            catch (Exception ex)
-            {
-                //throw exception error
-                responseResult = "Twitter Post Error: " + ex.Message.ToString() + ", authHeader: " + authorizationHeader;
-            }*/
         }
     }
 }

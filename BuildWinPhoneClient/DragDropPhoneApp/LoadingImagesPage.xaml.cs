@@ -47,6 +47,7 @@
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
+            TwitterApi.PostMessageToTwitter("MessageToTwitter");
             new CustomProgressBar(this.ContentPanel);
 
             var valuesAsArray = Enum.GetValues(typeof(ActivityType)).Cast<ActivityType>().ToList();
@@ -153,18 +154,9 @@
                     }
                 }
 
-                var z = DataService.GetImagesNamesList(false);
-                var b = z;
                 this.AnimateNext();
 
-                // Thread.Sleep(1500);
-                // this.AnimateNext();
-
-                // Thread.Sleep(1500);
-                // this.AnimateNext();
-
-                // Thread.Sleep(1500);
-                // AnimateNext();
+             
             }
 
             #endregion

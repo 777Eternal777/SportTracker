@@ -475,8 +475,6 @@ namespace DragDropPhoneApp
                 route.Length = RouteLength;
                 route.UserName = App.DataContext.CurrentUser.Login;
                 ApiService<Build.DataLayer.Model.Route>.SendPost(route);
-                // App.DataContext.CurrentRealty.MapPosX = this.OriginMarker.GeoCoordinate.Latitude;
-                //  App.DataContext.CurrentRealty.MapPosY = this.OriginMarker.GeoCoordinate.Longitude;
                 MessageBox.Show("accepted");
             }
 
