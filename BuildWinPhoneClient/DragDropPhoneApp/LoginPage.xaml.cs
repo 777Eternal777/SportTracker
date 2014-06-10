@@ -51,12 +51,14 @@ namespace DragDropPhoneApp
             {
                 App.DataContext.IsLoading = true;
                 ApiService<Users>.Login(this.Login.Text, this.Password.Text);
-                userRepository.Insert(new CurrentUser
-                                          {
-                                              Login = this.Login.Text,
-                                              Password = this.Password.Text,
-                                              LoginTime = DateTime.Now
-                                          });
+                var user = new CurrentUser
+                               {
+                                   Login = this.Login.Text,
+                                   Password = this.Password.Text,
+                                   LoginTime = DateTime.Now
+                               };
+                userRepository.Insert(user);
+                App.DataContext.CurrentUser.Login = this.Login.Text;
                 userRepository.SubmitChanges();
             }
             else

@@ -15,13 +15,17 @@ namespace Build.DataLayer.Model
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class Route 
     {
+        public Route()
+        {
+            Points= new List<Points>();
+        }
 
         [JsonProperty]
         public string UserName { get; set; }
         [JsonProperty]
-        public float Length { get; set; }
+        public double Length { get; set; }
         [JsonProperty]
-        public Points[] Points { get; set; }
+        public List<Points> Points { get; set; }
 
         [JsonProperty]
         public DateTime CreatedTime { get; set; }
@@ -31,11 +35,14 @@ namespace Build.DataLayer.Model
 
     }
     [JsonObject]
-    public class Points 
+    public class Points
     {
 
 
         [JsonProperty]
-        public Point Point { get; set; }
+        public double X { get; set; }
+
+        [JsonProperty]
+        public double Y { get; set; }
     }
 }

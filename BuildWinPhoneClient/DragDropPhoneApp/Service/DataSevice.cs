@@ -11,6 +11,7 @@
     using System.Threading.Tasks;
     using System.Windows.Media.Imaging;
 
+    using Build.DataLayer.Enum;
     using Build.DataLayer.Model;
 
     #endregion
@@ -53,8 +54,13 @@
         public static Activity GetImage(string imgName)
         {
             DateTime start = new DateTime(2010, 1, 1);
-
-            Activity imageData = new Activity { ImageSource = imgName, Title = imgName, TimeStamp = start };
+            ActivityType activityType;
+            var success = ActivityType.TryParse(imgName, out activityType);
+            if (!success)
+            {
+                activityType = ActivityType.Bicycle;
+            }
+            Activity imageData = new Activity { ActivityType = activityType, ImageSource = imgName, Title = imgName, TimeStamp = start };
 
             imageData.Image = FetchImage(imageData);
             return imageData;
@@ -66,7 +72,13 @@
             DateTime start = new DateTime(2010, 1, 1);
             foreach (var imgName in GetImagesNamesList(true))
             {
-                Activity imageData = new Activity { ImageSource = imgName, Title = imgName, TimeStamp = start };
+                ActivityType activityType;
+                var success = ActivityType.TryParse(imgName.Split('\\', '.')[1], out activityType);
+                if (!success)
+                {
+                    activityType = ActivityType.Bicycle;
+                }
+                Activity imageData = new Activity { ActivityType = activityType,ImageSource = imgName, Title = imgName, TimeStamp = start };
                 imageData.Image = FetchImage(imageData);
                 imageList.Add(imageData);
             }
@@ -77,7 +89,7 @@
         public static List<string> GetImagesNamesList(bool withPath)
         {
             IsolatedStorageFile storeFile = IsolatedStorageFile.GetUserStoreForApplication();
-          string imageFolder = Consts.ImageFolder;
+            string imageFolder = Consts.ImageFolder;
             if (!storeFile.DirectoryExists(Consts.ImageFolderSlash))
             {
                 storeFile.CreateDirectory(Consts.ImageFolderSlash);
@@ -130,7 +142,7 @@
                 throw new ArgumentException("one of parameters is null");
             }
             string imageFolder = Consts.ImageFolder;
-          
+
             using (var isoStore = IsolatedStorageFile.GetUserStoreForApplication())
             {
                 if (!isoStore.DirectoryExists(Consts.ImageFolderSlash))
@@ -149,7 +161,7 @@
 
                     stream1.Write(byteContent, 0, byteContent.Length);
                 }
-            
+
 
                 return true;
             }

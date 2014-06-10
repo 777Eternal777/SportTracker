@@ -90,7 +90,7 @@
     <Compile Include="Model\BuildCategories.cs" />
     <Compile Include="Model\CurrentUser.cs" />
     <Compile Include="Model\Entity.cs" />
-    <Compile Include="Model\Photo.cs" />
+    <Compile Include="Model\Activity.cs" />
     <Compile Include="Model\Realty.cs" />
     <Compile Include="Model\Route.cs" />
     <Compile Include="Model\Users.cs" />

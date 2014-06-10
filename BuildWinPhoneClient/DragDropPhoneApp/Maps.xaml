@@ -12,7 +12,7 @@
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    SupportedOrientations="Portrait" Orientation="Landscape"
+    SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
 
@@ -51,7 +51,7 @@
            
                 <TextBlock  x:Name="DestinationTitle" />
             </StackPanel>
-            <Grid Grid.Row="6" Grid.ColumnSpan="4" Margin="12,0,12,0">
+            <Grid Grid.Row="6" Grid.ColumnSpan="4" Margin="12,0,12,0" Width="432" Height="600" HorizontalAlignment="Center" VerticalAlignment="Center">
 
                 <maps:Map
                         
@@ -80,7 +80,7 @@
             <shell:ApplicationBarIconButton IconUri="/Toolkit.Content/ApplicationBar.Cancel.png" Text="cancel" Click="ApplicationBarIconButton_Click_1"/>
 
             <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem Text="menu item 1" />
+                <shell:ApplicationBarMenuItem Text="menu item 1" Click="ApplicationBarMenuItem_Click" />
                 <shell:ApplicationBarMenuItem Text="menu item 2" />
             </shell:ApplicationBar.MenuItems>
 

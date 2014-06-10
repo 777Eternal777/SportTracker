@@ -12,19 +12,28 @@ namespace DragDropPhoneApp
 {
     using System.Device.Location;
     using System.Diagnostics;
+    using System.IO;
     using System.IO.IsolatedStorage;
     using System.Reflection;
     using System.Threading;
     using System.Windows.Input;
     using System.Windows.Media;
+    using System.Windows.Media.Imaging;
     using System.Windows.Shapes;
 
     using Windows.Devices.Geolocation;
 
+    using Build.DataLayer.Model;
+
+    using DragDropPhoneApp.ApiConsumer;
+    using DragDropPhoneApp.Service;
     using DragDropPhoneApp.ViewModel;
 
     using Microsoft.Phone.Maps.Controls;
     using Microsoft.Phone.Maps.Services;
+    using Microsoft.Xna.Framework.Media;
+
+    using Route = Microsoft.Phone.Maps.Services.Route;
 
     public partial class MapPage : PhoneApplicationPage
     {
@@ -84,6 +93,7 @@ namespace DragDropPhoneApp
                 //   this.GetRouteBtn.Visibility = Visibility.Collapsed;
                 //   this.Submit.Visibility = Visibility.Visible;
             }
+            AddPlusMinusButtons();
         }
 
         #endregion
@@ -147,7 +157,8 @@ namespace DragDropPhoneApp
 
 
             this.geoQ.Waypoints = MyWayPoints;
-            this.geoQ.QueryAsync();
+            if (!geoQ.IsBusy)
+                this.geoQ.QueryAsync();
         }
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
@@ -158,6 +169,49 @@ namespace DragDropPhoneApp
             }
         }
 
+        private void AddPlusMinusButtons()
+        {
+            Ellipse circle = new Ellipse();
+
+            circle.Stroke = new SolidColorBrush(Colors.Transparent);
+            Grid grid = new Grid
+            {
+                Width = 60,
+                Height = 60
+            };
+            TextBlock plus = new TextBlock
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Text = "+"
+            };
+            TextBlock minus = new TextBlock
+          {
+              VerticalAlignment = VerticalAlignment.Center,
+              HorizontalAlignment = HorizontalAlignment.Center,
+              Text = "-"
+          };
+            circle.StrokeThickness = 25;
+            circle.Opacity = 0.8;
+            circle.Height = 50;
+            circle.Width = 50;
+            grid.Children.Add(circle);
+            grid.Children.Add(plus);
+            grid.Tap += (sender, args) =>
+            {
+                if (this.map1.ZoomLevel < 20)
+                {
+                    this.map1.ZoomLevel++;
+                }
+            };
+            Canvas.SetZIndex(grid, 10);
+            grid.Margin = new Thickness(10, 163, 0, 0);
+            grid.VerticalAlignment = VerticalAlignment.Top;
+            grid.HorizontalAlignment = HorizontalAlignment.Left;
+
+            //    this.ContentPanel.Children.Add(grid);
+
+        }
         private MapOverlay MakeDotMarker(GeoCoordinate location, bool isDestination)
         {
             MapOverlay marker = new MapOverlay();
@@ -165,16 +219,9 @@ namespace DragDropPhoneApp
             marker.GeoCoordinate = location;
 
             Ellipse circle = new Ellipse();
-            if (isDestination)
-            {
-                circle.Fill = new SolidColorBrush(Colors.Green);
-                circle.Stroke = new SolidColorBrush(Colors.Orange);
-            }
-            else
-            {
-                circle.Fill = new SolidColorBrush(Colors.Yellow);
-                circle.Stroke = new SolidColorBrush(Colors.Red);
-            }
+
+            circle.Fill = new SolidColorBrush(Colors.Yellow);
+            circle.Stroke = new SolidColorBrush(Colors.Red);
             Grid grid = new Grid
                             {
                                 Width = 60,
@@ -184,7 +231,7 @@ namespace DragDropPhoneApp
                                 {
                                     VerticalAlignment = VerticalAlignment.Center,
                                     HorizontalAlignment = HorizontalAlignment.Center,
-                                    Text = "1"
+                                    Text = (1 + this.MapMarkersList.Count).ToString()
                                 };
             circle.StrokeThickness = 25;
             circle.Opacity = 0.8;
@@ -222,50 +269,36 @@ namespace DragDropPhoneApp
 
         private void Touch_FrameReported(object sender, TouchFrameEventArgs e)
         {
-
-            TouchPoint tPoint = e.GetPrimaryTouchPoint(this.map1);
-
-            if (tPoint.Action == TouchAction.Down)
+            try
             {
-                var marker = MakeDotMarker(this.map1.ConvertViewportPointToGeoCoordinate(tPoint.Position), false);
+                TouchPoint tPoint = e.GetPrimaryTouchPoint(this.map1);
 
-                //this.selectedMarker.GeoCoordinate = this.map1.ConvertViewportPointToGeoCoordinate(tPoint.Position);
-                this.Start_ReverceGeoCoding(this.selectedMarker);
-                StartGeoQ();
+                if (tPoint.Action == TouchAction.Down)
+                {
+                    var marker = MakeDotMarker(this.map1.ConvertViewportPointToGeoCoordinate(tPoint.Position), false);
+
+                    //this.selectedMarker.GeoCoordinate = this.map1.ConvertViewportPointToGeoCoordinate(tPoint.Position);
+                    this.Start_ReverceGeoCoding(marker);
+                    StartGeoQ();
+                }
             }
+            catch (ArgumentException)
+            {
 
 
-            /*       if (!App.DataContext.isInRealtyCreating)
-                   {
-                       return;
-                   }
-
-                   if (this.draggingNow)
-                   {
-                       TouchPoint tPoint = e.GetPrimaryTouchPoint(this.map1);
-
-                       if (tPoint.Action == TouchAction.Move && (this.selectedMarker != null))
-                       {
-                           this.selectedMarker.GeoCoordinate = this.map1.ConvertViewportPointToGeoCoordinate(tPoint.Position);
-                           this.Start_ReverceGeoCoding(this.selectedMarker);
-                       }
-                       else if (tPoint.Action == TouchAction.Up)
-                       {
-                           this.selectedMarker = null;
-                           this.draggingNow = false;
-                           this.map1.IsEnabled = true;
-                       }
-                   }*/
+            }
         }
 
         private int failedQueriesCount = 0;
 
         private bool allfailed;
+
+        private double RouteLength;
         private void geoQ_QueryCompleted(object sender, QueryCompletedEventArgs<Route> e)
         {
             if (allfailed)
             {
-                this.MapMarkersList.RemoveAt(MapMarkersList.Count-1);
+                this.MapMarkersList.RemoveAt(MapMarkersList.Count - 1);
                 allfailed = false;
             }
             if (this.lastRoute != null)
@@ -282,9 +315,9 @@ namespace DragDropPhoneApp
 
                 this.map1.AddRoute(this.lastRoute);
                 this.map1.SetView(e.Result.BoundingBox);
-
+                RouteLength = myRoute.LengthInMeters / 1000;
                 MessageBox.Show(
-                    "Distance: " + (myRoute.LengthInMeters / 1000) + " km, Estimated traveltime: "
+                    "Distance: " + (RouteLength) + " km, Estimated traveltime: "
                     + myRoute.EstimatedDuration);
                 failedQueriesCount = 0;
             }
@@ -301,6 +334,10 @@ namespace DragDropPhoneApp
                 {
                     allfailed = true;
                 }
+            }
+            catch (InvalidOperationException)
+            {
+
             }
 
         }
@@ -411,23 +448,59 @@ namespace DragDropPhoneApp
 
         }
 
-        private void ApplicationBarIconButton_Click_1(object sender, EventArgs e)
+        private void ApplicationBarIconButton_Click_1(object sender, EventArgs e) //save click
         {
 
-            this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));
+            //   this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));
 
         }
 
         private void Save_Click(object sender, EventArgs e)
         {
-            if (App.DataContext.isInRealtyCreating)
+            //  if (App.DataContext.isInRealtyCreating)
             {
-                App.DataContext.CurrentRealty.MapPosX = this.OriginMarker.GeoCoordinate.Latitude;
-                App.DataContext.CurrentRealty.MapPosY = this.OriginMarker.GeoCoordinate.Longitude;
+                var route = new Build.DataLayer.Model.Route();
+
+                route.ActivityType = App.DataContext.CurrentActivity.ActivityType;
+
+                foreach (var marker in MapMarkersList)
+                {
+                    route.Points.Add(new Points
+                                         {
+                                             Y = marker.GeoCoordinate.Longitude,
+                                             X = marker.GeoCoordinate.Latitude
+                                         });
+                }
+                route.CreatedTime = DateTime.Now;
+                route.Length = RouteLength;
+                route.UserName = App.DataContext.CurrentUser.Login;
+                ApiService<Build.DataLayer.Model.Route>.SendPost(route);
+                // App.DataContext.CurrentRealty.MapPosX = this.OriginMarker.GeoCoordinate.Latitude;
+                //  App.DataContext.CurrentRealty.MapPosY = this.OriginMarker.GeoCoordinate.Longitude;
                 MessageBox.Show("accepted");
             }
 
-            this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));
+            // this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));
+        }
+
+        private void ApplicationBarMenuItem_Click(object sender, EventArgs e)
+        {
+            var writeableBitmap = new WriteableBitmap((int)map1.RenderSize.Width, (int)map1.RenderSize.Height);
+
+            writeableBitmap.Render(map1, new ScaleTransform() { ScaleX = 1, ScaleY = 1 });
+            writeableBitmap.Invalidate();
+
+            //  Image img = new Image();
+            // img.Source = writeableBitmap;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                Extensions.SaveJpeg(writeableBitmap, ms,
+                   (int)map1.RenderSize.Width, (int)map1.RenderSize.Height, 0, 100);
+
+                DataService.SaveImage("Asdas.jpg", ms.ToArray());
+            }
+            MessageBox.Show("Adac");
+
         }
     }
 }

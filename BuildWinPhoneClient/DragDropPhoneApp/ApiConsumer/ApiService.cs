@@ -73,8 +73,7 @@
                     Imag imag =null;
                     try
                     {
-                        var z = imgActivity;
-                        var b = z;
+                    
                          imag = JsonConvert.DeserializeObject<Imag>(args.Result);
                   
                     }
