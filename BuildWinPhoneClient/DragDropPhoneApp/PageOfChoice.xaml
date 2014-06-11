@@ -31,7 +31,7 @@
             <Button x:Name="Share" Content="Share" HorizontalAlignment="Left" Margin="105,86,0,0" VerticalAlignment="Top" Width="236" Tap="Share_Tap"/>
 
         </Grid>
-        <Button x:Name="Not_to_share" Content="Not to share" HorizontalAlignment="Left" Margin="144,224,0,0" Grid.Row="1" VerticalAlignment="Top" Width="200"/>
+        <Button x:Name="Not_to_share" Content="Not to share" HorizontalAlignment="Left" Margin="144,224,0,0" Grid.Row="1" VerticalAlignment="Top" Width="200" Tap="Not_to_share_Tap"/>
     </Grid>
 
 </phone:PhoneApplicationPage>

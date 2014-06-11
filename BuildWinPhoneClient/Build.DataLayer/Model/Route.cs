@@ -6,18 +6,45 @@ using System.Threading.Tasks;
 
 namespace Build.DataLayer.Model
 {
+    using System.IO;
+    using System.IO.IsolatedStorage;
     using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media.Imaging;
 
     using Build.DataLayer.Enum;
 
     using Newtonsoft.Json;
 
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class Route 
+    public class Route
     {
         public Route()
         {
-            Points= new List<Points>();
+            Points = new List<Points>();
+        }
+
+        public BitmapImage Image
+        {
+            get
+            {
+                BitmapImage img = new BitmapImage();
+                string filename = @"\Images" + @"\" + this.ActivityType.ToString();
+                Stream stream = null;
+                using (var isoStore = IsolatedStorageFile.GetUserStoreForApplication())
+                {
+
+
+                    if (isoStore.FileExists(filename))
+                    {
+                        stream = isoStore.OpenFile(filename, FileMode.Open, FileAccess.Read);
+
+                    }
+                }
+                img.SetSource(stream);
+                return img;
+            }
+
         }
 
         [JsonProperty]
@@ -26,7 +53,9 @@ namespace Build.DataLayer.Model
         public double Length { get; set; }
         [JsonProperty]
         public List<Points> Points { get; set; }
-
+        [JsonProperty]
+        public TimeSpan Duration { get; set; }
+       
         [JsonProperty]
         public DateTime CreatedTime { get; set; }
 

@@ -110,7 +110,7 @@ namespace DragDropPhoneApp.ApiConsumer
      }*/
     public static class TwitterApi
     {
-        
+
 
         private static string AccesToken = "2558909828-qsFXEywYd2xjGo1b9pIANFvMjN2ANAOiSPsp2mp";
 
@@ -120,82 +120,82 @@ namespace DragDropPhoneApp.ApiConsumer
         private static string APIsecret = "5eqgOqF1Ca2fUSL8MwZaL6F3GW5xlTKLEbHph46HUs0iLrPtL2"; //Keep the "API secret" a secret. This key should never be human-readable in your application.
         public static void PostMessageToTwitter(string message)
         {
-            
-            
+
+
             if (NetworkInterface.GetIsNetworkAvailable())
             {
                 //Obtain keys by registering your app on https://dev.twitter.com/apps
                 var service = new TwitterService(ApiKey, APIsecret);
                 service.AuthenticateWith(AccesToken, AccesTokenSecret);
-              
+
                 service.SendTweet(new SendTweetOptions
                                       {
                                           Status = message,
-                                          
+
                                       },
                     (status, response) =>
-                        {
-                           // Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show(response.Response + response.StatusCode); });
-                           
-                        } );
-       //   service.SendTweetWithMedia(new SendTweetWithMediaOptions
-                                       //       {
-                                              //    Images = 
-                                      //        } );
+                    {
+                        // Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show(response.Response + response.StatusCode); });
+
+                    });
+                //   service.SendTweetWithMedia(new SendTweetWithMediaOptions
+                //       {
+                //    Images = 
+                //        } );
                 //ScreenName is the profile name of the twitter user.
-              
+
             }
             else
             {
 
-            //    MessageBox.Show("Please check your internet connestion.");
+                //    MessageBox.Show("Please check your internet connestion.");
             }
         }
         public static void uploadPhoto(Stream photoStream, string photoName)
-{
-var credentials = new OAuthCredentials
         {
-            Type = OAuthType.ProtectedResource,
-            SignatureMethod = OAuthSignatureMethod.HmacSha1,
-            ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-            ConsumerKey = ApiKey,
-            ConsumerSecret = APIsecret,
-            Token = AccesToken,
-            TokenSecret = AccesTokenSecret,
-            Version = "1.0a"
-        };
+            var credentials = new OAuthCredentials
+                    {
+                        Type = OAuthType.ProtectedResource,
+                        SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                        ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
+                        ConsumerKey = ApiKey,
+                        ConsumerSecret = APIsecret,
+                        Token = AccesToken,
+                        TokenSecret = AccesTokenSecret,
+                        Version = "1.0a"
+                    };
 
 
-        RestClient restClient = new RestClient
-        {
-            Authority = "https://upload.twitter.com",
-            HasElevatedPermissions = true,
-            Credentials = credentials,
-            Method = WebMethod.Post
-         };
-         RestRequest restRequest = new RestRequest
-         {
-            Path = "1/statuses/update_with_media.json"
-         };
+            RestClient restClient = new RestClient
+            {
+                Authority = "https://upload.twitter.com",
+                HasElevatedPermissions = true,
+                Credentials = credentials,
+                Method = WebMethod.Post
+            };
+            RestRequest restRequest = new RestRequest
+            {
+                Path = "1/statuses/update_with_media.json"
+            };
 
-         restRequest.AddParameter("status", "test");
-         restRequest.AddFile("media[]", photoName, photoStream, "image/jpg");
-         restClient.BeginRequest(restRequest, new RestCallback(PostTweetRequestCallback));
+            restRequest.AddParameter("status", "test");
+            restRequest.AddFile("media[]", photoName, photoStream, "image/jpg");
+            restClient.BeginRequest(restRequest, new RestCallback(PostTweetRequestCallback));
 
-}
-
-    
+        }
 
 
 
-private static void PostTweetRequestCallback(RestRequest request, Hammock.RestResponse response, object obj)
+
+
+        private static void PostTweetRequestCallback(RestRequest request, Hammock.RestResponse response, object obj)
         {
             Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show(response.Content + response.StatusCode); });
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-        //Success code
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                //Success code
+            }
         }
-}
 
         public static void PostMessageWithImageToTwitter(string message, byte[] activity)
         {
@@ -206,76 +206,75 @@ private static void PostTweetRequestCallback(RestRequest request, Hammock.RestRe
                     ConsumerKey = ApiKey,
                     ConsumerSecret = APIsecret,
                     AccessToken = AccesToken,
-                    AccessTokenSecret =AccesTokenSecret
+                    AccessTokenSecret = AccesTokenSecret
                 }
             };
-            LinqToTwitter.TwitterContext adsa = new TwitterContext(auth);
+            LinqToTwitter.TwitterContext tweetContext = new TwitterContext(auth);
             string status =
               message +
                DateTime.Now.ToString(CultureInfo.InvariantCulture);
 
 
 
-        //    var tweet1 =  adsa.TweetAsync("asdsdasdsadsd").Result;
-          //  if (tweet1 != null)
-            //    Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show(tweet1.Text); });
-
-        //    return;
             const bool PossiblySensitive = false;
             const decimal Latitude = 37.78215m; //37.78215m;
             const decimal Longitude = -122.40060m;// -122.40060m;
             const bool DisplayCoordinates = false;
             const string PlaceID = null;
-            const string ReplaceThisWithYourImageLocation =
-                @"..\..\images\200xColor_2.png";
             byte[] imageBytes = activity;
-           
 
-       var ds=     adsa.TweetWithMediaAsync(message, false, imageBytes).Result;
-       if (ds != null)
-           Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show(ds.Text); });
+
+            var ds = tweetContext.TweetWithMediaAsync(message, false, imageBytes).Result;
+            if (ds != null)
+                Deployment.Current.Dispatcher.BeginInvoke(
+                    () =>
+                        {
+                            MessageBox.Show(ds.Text);
+                            ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
+                                new Uri("/RealtyList.xaml", UriKind.Relative));
+                        });
             return;
-            Status tweet =  adsa.TweetWithMediaAsync(
+            Status tweet = tweetContext.TweetWithMediaAsync(
                 status, PossiblySensitive, Latitude, Longitude,
                 PlaceID, DisplayCoordinates, imageBytes).Result;
-              if (tweet != null)
-                  Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show(tweet.Text); });
-       /*     if (NetworkInterface.GetIsNetworkAvailable())
-            {
-                //Obtain keys by registering your app on https://dev.twitter.com/apps
-                var service = new TwitterService(ApiKey, APIsecret);
-                service.AuthenticateWith(AccesToken, AccesTokenSecret);
-                var images = new Dictionary<string, Stream>();
-                MemoryStream ms = new MemoryStream();
+            if (tweet != null)
+                Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show(tweet.Text); });
+            /*     if (NetworkInterface.GetIsNetworkAvailable())
+                 {
+                     //Obtain keys by registering your app on https://dev.twitter.com/apps
+                     var service = new TwitterService(ApiKey, APIsecret);
+                     service.AuthenticateWith(AccesToken, AccesTokenSecret);
+                     var images = new Dictionary<string, Stream>();
+                     MemoryStream ms = new MemoryStream();
                  
-                        WriteableBitmap btmMap = new WriteableBitmap
-                            (activity.Image);
+                             WriteableBitmap btmMap = new WriteableBitmap
+                                 (activity.Image);
                        
-                        Extensions.SaveJpeg(btmMap, ms,
-                            activity.Image.PixelWidth, activity.Image.PixelHeight, 0, 100);
+                             Extensions.SaveJpeg(btmMap, ms,
+                                 activity.Image.PixelWidth, activity.Image.PixelHeight, 0, 100);
 
 
-                        images.Add(activity.ActivityType.ToString(), ms);
+                             images.Add(activity.ActivityType.ToString(), ms);
             
-                 service.SendTweetWithMedia(new SendTweetWithMediaOptions
-                                                {
-                                                    Status = message,
-                                                    Images = images,
+                      service.SendTweetWithMedia(new SendTweetWithMediaOptions
+                                                     {
+                                                         Status = message,
+                                                         Images = images,
                                                     
-                                                },
-                     (status, response) =>
-                         {
-                             Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show(response.Response + response.StatusCode); });
+                                                     },
+                          (status, response) =>
+                              {
+                                  Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show(response.Response + response.StatusCode); });
                            
-                         });
-                //ScreenName is the profile name of the twitter user.
+                              });
+                     //ScreenName is the profile name of the twitter user.
 
-            }
-            else
-            {
+                 }
+                 else
+                 {
 
-                //    MessageBox.Show("Please check your internet connestion.");
-            }*/
+                     //    MessageBox.Show("Please check your internet connestion.");
+                 }*/
         }
     }
 }

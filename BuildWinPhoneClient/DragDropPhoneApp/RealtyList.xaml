@@ -11,7 +11,7 @@
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    SupportedOrientations="Portrait" Orientation="Landscape"
+    SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True" Loaded="PhoneApplicationPage_Loaded">
     <phone:PhoneApplicationPage.Resources>
@@ -122,29 +122,29 @@
 
         <DataTemplate x:Key="LongListSelectorItemTemplate">
             <StackPanel HorizontalAlignment="Center" >
-                <Image Source="{Binding PictureSource}" Width="200" Height="200" Stretch="UniformToFill"  >
+                <Image Source="{Binding Image}" Width="200" Height="200" Stretch="UniformToFill"  >
                     <!--, Converter={StaticResource BooleanToVisibilityConverter}-->
                 </Image>
                 <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
 
                     <TextBlock Text="Name:"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                    <TextBlock Text="{Binding Named}"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBlock Text="{Binding UserName}"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
 
                     <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
 
-                    <TextBlock Text="Price:"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <TextBlock Text="Length:"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
-                    <TextBlock Text="{Binding Price}"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                        <TextBlock Text="{Binding Length}"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
 
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
 
-                    <TextBlock Text="Square:"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <TextBlock Text="Duration:"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
-                    <TextBlock Text="{Binding Square}"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                        <TextBlock Text="{Binding Duration}"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
 
                 </StackPanel>
                 </StackPanel>
@@ -165,29 +165,19 @@
     <!--   GroupHeaderTemplate="{StaticResource LongListSelectorGroupHeaderTemmplate}"
                                           LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
-        <phone:Pivot Title="{Binding Path=LocalizedResources.Realty, Source={StaticResource LocalizedStrings}}" Name="pivot" Margin="-3, 0, 0, 0" >
+        <phone:Pivot Title="App" Name="pivot" Margin="-3, 0, 0, 0" >
 
-            <phone:PivotItem Header="{Binding Path=LocalizedResources.RealtyForSell, Source={StaticResource LocalizedStrings}}">
+
+            <phone:PivotItem Header="Routes">
 
                 <phone:LongListSelector Name="RealtyforSell"   
-                                        ListHeaderTemplate="{StaticResource LongListSelectorHeaderTemplate}"
-                                           ItemsSource="{Binding GroupedRealtiesForRent}"
+                                            ItemsSource="{Binding UserRoutesList}"
                                            JumpListStyle="{StaticResource LongListSelectorJumpListStyle}"  
                                                 ItemTemplate="{StaticResource LongListSelectorItemTemplate}"
                                            HideEmptyGroups ="true"  SelectionChanged="BlogsLongListSelector_SelectionChanged"  IsGroupingEnabled ="true" LayoutMode="List" />
             </phone:PivotItem>
 
-            <phone:PivotItem Header="{Binding Path=LocalizedResources.RealtyForRent, Source={StaticResource LocalizedStrings}}">
-
-                <phone:LongListSelector Name="BlogsLongListSelector"   
-                                        
-                                        ListHeaderTemplate="{StaticResource LongListSelectorHeaderTemplate}"
-                                           ItemsSource="{Binding GroupedRealtiesForSell}"
-                                           JumpListStyle="{StaticResource LongListSelectorJumpListStyle}"  
-                                            ItemTemplate="{StaticResource LongListSelectorItemTemplate}"
-                                           HideEmptyGroups ="true"  IsGroupingEnabled ="true" LayoutMode="List" SelectionChanged="BlogsLongListSelector_SelectionChanged" />
-            </phone:PivotItem>
-
+           
         </phone:Pivot>
     </Grid>
     <phone:PhoneApplicationPage.ApplicationBar>

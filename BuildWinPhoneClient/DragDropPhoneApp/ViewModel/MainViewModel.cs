@@ -41,6 +41,21 @@ namespace DragDropPhoneApp.ViewModel
                 this.NotifyPropertyChanged("GroupedPhotos");
             }
         }
+        private List<Route> routes;
+        public List<Route> Routes
+        {
+            get
+            {
+                return this.routes;
+            }
+
+            set
+            {
+                this.routes = value;
+                Deployment.Current.Dispatcher.BeginInvoke(
+                    () => { this.NotifyPropertyChanged("UserRoutesList"); });
+            }
+        }
 
         #endregion
 
@@ -49,6 +64,7 @@ namespace DragDropPhoneApp.ViewModel
         public MainViewModel()
         {
             this.Realtys = new List<Realty>();
+            Routes = new List<Route>();
             this.CurrentUser = new Users
                                    {
                                        Login = "Login",
@@ -72,23 +88,16 @@ namespace DragDropPhoneApp.ViewModel
 
         public Route CurrentRoute { get; set; }
         public Activity CurrentActivity { get; set; }
-        public List<AlphaKeyGroup<Realty>> GroupedRealtiesForRent
+        public List<AlphaKeyGroup<Route>> UserRoutesList
         {
             get
             {
-                var cards = this.Realtys.Where(v => v.IsForRent);
-                return AlphaKeyGroup<Realty>.CreateGroups(cards, s => s.Named, true);
+                var cards = this.Routes;
+                return AlphaKeyGroup<Route>.CreateGroups(cards, s => s.UserName, true);
             }
         }
 
-        public List<AlphaKeyGroup<Realty>> GroupedRealtiesForSell
-        {
-            get
-            {
-                var cards = this.Realtys.Where(v => !v.IsForRent);
-                return AlphaKeyGroup<Realty>.CreateGroups(cards, s => s.Named, true);
-            }
-        }
+       
 
         public List<KeyedList<string, Activity>> GroupedPhotos
         {
@@ -187,6 +196,7 @@ namespace DragDropPhoneApp.ViewModel
                         });
             }
         }
+        
         public Dictionary<int, bool> DownloadImageUnderNumberCompleted = new Dictionary<int, bool>(); 
 
         #endregion

@@ -50,5 +50,11 @@ namespace DragDropPhoneApp
                     });
 
         }
+
+        private void Not_to_share_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+
+            this.NavigationService.Navigate(new Uri("/RealtyList.xaml", UriKind.Relative));
+        }
     }
 }

@@ -132,20 +132,10 @@
                         var realtys = JsonConvert.DeserializeObject<Route[]>(e1.Result);
                         if (realtys != null)
                         {
-                            var newList = new List<Route>();
-                          //  newList.AddRange(App.DataContext.Realtys);
-                            //var downloadedRealtyList = realtys.ToList();
-                            //newList.AddRange(downloadedRealtyList);
-                            //if (downloadedRealtyList.Count < take)
-                            {
                                 Deployment.Current.Dispatcher.BeginInvoke(() => { App.DataContext.IsLoading = false; });
-                              //  Thread.Sleep(100000);
-                            }
-
+                            
                             App.DataContext.Routes = realtys.ToList();
                         }
-
-                        //GetRoutes();
                     });
         }
 
@@ -198,7 +188,7 @@
                                 }
 
                                 ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
-                                    new Uri("/RealtyList.xaml", UriKind.Relative)); //AllImagesPage
+                                    new Uri("/AllImagesPage.xaml", UriKind.Relative)); //AllImagesPage
                             });
                 }
                 else

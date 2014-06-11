@@ -293,7 +293,9 @@ namespace DragDropPhoneApp
 
         private bool allfailed;
 
-        private double RouteLength;
+        private double routeLength;
+
+        private TimeSpan routeDuration;
         private void geoQ_QueryCompleted(object sender, QueryCompletedEventArgs<Route> e)
         {
             if (allfailed)
@@ -315,10 +317,11 @@ namespace DragDropPhoneApp
 
                 this.map1.AddRoute(this.lastRoute);
                 this.map1.SetView(e.Result.BoundingBox);
-                RouteLength = myRoute.LengthInMeters / 1000;
+                routeLength = myRoute.LengthInMeters / 1000;
                 MessageBox.Show(
-                    "Distance: " + (RouteLength) + " km, Estimated traveltime: "
+                    "Distance: " + (routeLength) + " km, Estimated traveltime: "
                     + myRoute.EstimatedDuration);
+                routeDuration = myRoute.EstimatedDuration;
                 failedQueriesCount = 0;
             }
             catch (TargetInvocationException)
@@ -472,7 +475,8 @@ namespace DragDropPhoneApp
                                          });
                 }
                 route.CreatedTime = DateTime.Now;
-                route.Length = RouteLength;
+                route.Duration = routeDuration;
+                route.Length = routeLength;
                 route.UserName = App.DataContext.CurrentUser.Login;
                 App.DataContext.CurrentActivity.Image = MapToBitMap();
                 App.DataContext.CurrentActivity.TimeStamp = DateTime.Now;

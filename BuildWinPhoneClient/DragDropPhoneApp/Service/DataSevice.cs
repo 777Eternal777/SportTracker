@@ -116,7 +116,7 @@
 
         #region Methods
 
-        private static Stream LoadImage(string filename)
+        public static Stream LoadImage(string filename)
         {
             if (filename == null)
             {
@@ -130,6 +130,15 @@
                 if (isoStore.FileExists(filename))
                 {
                     stream = isoStore.OpenFile(filename, FileMode.Open, FileAccess.Read);
+                }
+                else
+                {
+                    var file1 = Path.Combine(Consts.ImageFolder, filename);
+                    if (isoStore.FileExists(file1))
+                    {
+                        stream = isoStore.OpenFile(filename, FileMode.Open, FileAccess.Read);
+
+                    }
                 }
             }
 
