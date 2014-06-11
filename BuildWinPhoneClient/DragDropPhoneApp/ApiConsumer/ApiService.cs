@@ -97,22 +97,17 @@
             client.DownloadStringAsync(
                 new Uri(uriRoutesApi.OriginalString + string.Format("?activity={0}", imgActivity)));
         }
-        public static void GetRealties()
+        public static void GetRoutes()
         {
             Deployment.Current.Dispatcher.BeginInvoke(() => { App.DataContext.IsLoading = true; });
 
             WebClient client = new WebClient();
 
             client.Headers["Accept"] = "application/json";
-            client.DownloadStringCompleted += RealtyDownloadedCallback;
-            if (take == 0)
-            {
-                // return;
-            }
-
+            client.DownloadStringCompleted += RouteDownloadedCallback;
+      
             client.DownloadStringAsync(
-                new Uri(uriRoutesApi.OriginalString + string.Format("?skip={0}&take={1}", skip, take)));
-            skip += take;
+                new Uri(uriRoutesApi.OriginalString + string.Format("?userName={0}", App.DataContext.CurrentUser.Login)));
         }
 
         public static void Login(string login, string pass)
@@ -127,30 +122,30 @@
             StartWebRequest(uriUserApi.OriginalString + string.Format("?login={0}&pass={1}", login, pass), null);
         }
 
-        public static void RealtyDownloadedCallback(object s1, DownloadStringCompletedEventArgs e1)
+        public static void RouteDownloadedCallback(object s1, DownloadStringCompletedEventArgs e1)
         {
          
 
             Task.Factory.StartNew(
                 () =>
                     {
-                        var realtys = JsonConvert.DeserializeObject<Realty[]>(e1.Result);
+                        var realtys = JsonConvert.DeserializeObject<Route[]>(e1.Result);
                         if (realtys != null)
                         {
-                            var newList = new List<Realty>();
-                            newList.AddRange(App.DataContext.Realtys);
-                            var downloadedRealtyList = realtys.ToList();
-                            newList.AddRange(downloadedRealtyList);
-                            if (downloadedRealtyList.Count < take)
+                            var newList = new List<Route>();
+                          //  newList.AddRange(App.DataContext.Realtys);
+                            //var downloadedRealtyList = realtys.ToList();
+                            //newList.AddRange(downloadedRealtyList);
+                            //if (downloadedRealtyList.Count < take)
                             {
                                 Deployment.Current.Dispatcher.BeginInvoke(() => { App.DataContext.IsLoading = false; });
-                                Thread.Sleep(100000);
+                              //  Thread.Sleep(100000);
                             }
 
-                            App.DataContext.Realtys = newList;
+                            App.DataContext.Routes = realtys.ToList();
                         }
 
-                        GetRealties();
+                        //GetRoutes();
                     });
         }
 
@@ -192,6 +187,7 @@
                     (result.AsyncState as HttpWebRequest).EndGetResponse(result) as HttpWebResponse;
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
+               
                     Deployment.Current.Dispatcher.BeginInvoke(
                         () =>
                             {
@@ -202,7 +198,7 @@
                                 }
 
                                 ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
-                                    new Uri("/AllImagesPage.xaml", UriKind.Relative));
+                                    new Uri("/RealtyList.xaml", UriKind.Relative)); //AllImagesPage
                             });
                 }
                 else

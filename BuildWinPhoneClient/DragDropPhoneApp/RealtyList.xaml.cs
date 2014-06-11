@@ -41,7 +41,7 @@
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            ApiService<Realty>.GetRealties();
+            ApiService<Route>.GetRoutes();
         }
 
         private void AddNew_Tap(object sender, GestureEventArgs e)

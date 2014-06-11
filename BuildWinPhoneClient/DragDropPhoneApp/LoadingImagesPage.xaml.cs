@@ -12,6 +12,7 @@
     using System.Windows.Shapes;
 
     using Build.DataLayer.Enum;
+    using Build.DataLayer.Model;
 
     using DragDropPhoneApp.ApiConsumer;
     using DragDropPhoneApp.Service;
@@ -48,6 +49,10 @@
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
          //   TwitterApi.PostMessageToTwitter("MessageToTwitter");
+
+
+
+           
             new CustomProgressBar(this.ContentPanel);
 
             var valuesAsArray = Enum.GetValues(typeof(ActivityType)).Cast<ActivityType>().ToList();
