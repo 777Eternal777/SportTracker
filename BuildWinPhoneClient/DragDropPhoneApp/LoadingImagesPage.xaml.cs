@@ -47,7 +47,7 @@
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            TwitterApi.PostMessageToTwitter("MessageToTwitter");
+         //   TwitterApi.PostMessageToTwitter("MessageToTwitter");
             new CustomProgressBar(this.ContentPanel);
 
             var valuesAsArray = Enum.GetValues(typeof(ActivityType)).Cast<ActivityType>().ToList();

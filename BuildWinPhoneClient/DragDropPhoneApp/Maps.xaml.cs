@@ -474,13 +474,37 @@ namespace DragDropPhoneApp
                 route.CreatedTime = DateTime.Now;
                 route.Length = RouteLength;
                 route.UserName = App.DataContext.CurrentUser.Login;
+                App.DataContext.CurrentActivity.Image = MapToBitMap();
+                App.DataContext.CurrentActivity.TimeStamp = DateTime.Now;
                 ApiService<Build.DataLayer.Model.Route>.SendPost(route);
-                MessageBox.Show("accepted");
+     
+                this.NavigationService.Navigate(new Uri("/PageOfChoice.xaml", UriKind.Relative));
             }
 
             // this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));
         }
 
+        private BitmapImage MapToBitMap()
+        {
+            var writeableBitmap = new WriteableBitmap((int)map1.RenderSize.Width, (int)map1.RenderSize.Height);
+
+            writeableBitmap.Render(map1, new ScaleTransform() { ScaleX = 1, ScaleY = 1 });
+            writeableBitmap.Invalidate();
+
+            //  Image img = new Image();
+            // img.Source = writeableBitmap;
+            BitmapImage biImg = new BitmapImage();
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+           Extensions.SaveJpeg(writeableBitmap, ms,
+                   (int)map1.RenderSize.Width, (int)map1.RenderSize.Height, 0, 100);
+           ms.Seek(0, SeekOrigin.Begin);
+                biImg.SetSource(ms);
+            }
+            return biImg;
+
+        }
         private void ApplicationBarMenuItem_Click(object sender, EventArgs e)
         {
             var writeableBitmap = new WriteableBitmap((int)map1.RenderSize.Width, (int)map1.RenderSize.Height);
@@ -494,7 +518,7 @@ namespace DragDropPhoneApp
             {
                 Extensions.SaveJpeg(writeableBitmap, ms,
                    (int)map1.RenderSize.Width, (int)map1.RenderSize.Height, 0, 100);
-
+                ms.Seek(0, SeekOrigin.Begin);
                 DataService.SaveImage("Asdas.jpg", ms.ToArray());
             }
             MessageBox.Show("Adac");

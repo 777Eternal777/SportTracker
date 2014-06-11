@@ -73,7 +73,7 @@
             foreach (var imgName in GetImagesNamesList(true))
             {
                 ActivityType activityType;
-                var success = ActivityType.TryParse(imgName.Split('\\', '.')[1], out activityType);
+                var success = ActivityType.TryParse(imgName.Split('\\', '.')[2], out activityType);
                 if (!success)
                 {
                     activityType = ActivityType.Bicycle;
