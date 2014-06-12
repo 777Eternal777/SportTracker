@@ -101,7 +101,7 @@
             {
                 foreach (string file in fileList)
                 {
-                    imgNameList.Add(Path.Combine(imageFolder, file));//Path.Combine(imageFolder, file)
+                    imgNameList.Add(Path.Combine(imageFolder, file));
                 }
             }
             else
@@ -159,7 +159,7 @@
                     isoStore.CreateDirectory(Consts.ImageFolderSlash);
                 }
                 var file1 = Path.Combine(imageFolder, filename);
-                filename = filename + ".jpg";
+        
                 if (isoStore.FileExists(file1))
                 {
                     return false;

@@ -66,10 +66,11 @@
         {
 
             WebClient client = new WebClient();
-
+           
             client.Headers["Accept"] = "application/json";
             client.DownloadStringCompleted += (sender, args) =>
-                {
+            {
+                
                     Imag imag =null;
                     try
                     {
