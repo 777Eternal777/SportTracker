@@ -10,10 +10,14 @@ using Microsoft.Phone.Shell;
 
 namespace DragDropPhoneApp
 {
+    using Windows.Phone.System.Analytics;
+
     using BuildSeller.Core.Model;
 
     using DragDropPhoneApp.ApiConsumer;
     using DragDropPhoneApp.ViewModel;
+
+    using Microsoft.Phone.Info;
 
     public partial class RegisterPage : PhoneApplicationPage
     {
@@ -35,6 +39,8 @@ namespace DragDropPhoneApp
                 return;
             }
             App.DataContext.CurrentUser.RegisterDateTime = DateTime.Now;
+            App.DataContext.CurrentUser.DeviceId = HostInformation.PublisherHostId;
+           
             ApiService<Users>.SendPost(App.DataContext.CurrentUser, false);
             MessageBox.Show("Registration successfull");
             this.NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));

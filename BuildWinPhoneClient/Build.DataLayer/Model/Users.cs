@@ -18,7 +18,8 @@ namespace BuildSeller.Core.Model
 
         [JsonProperty]
         public virtual string Password { get; set; }
-
+        [JsonProperty]
+        public virtual string DeviceId { get; set; }
 
         [JsonProperty]
         public virtual DateTime RegisterDateTime { get; set; }

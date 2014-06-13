@@ -52,6 +52,7 @@
                 Deployment.Current.Dispatcher.BeginInvoke(
                     () =>
                         {
+                            App.DataContext.IsLoading = false;
                             MessageBox.Show(ds.Text);
                             ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
                                 new Uri("/RealtyList.xaml", UriKind.Relative));

@@ -15,18 +15,19 @@ namespace DragDropPhoneApp
     using System.Windows.Media.Imaging;
 
     using DragDropPhoneApp.ApiConsumer;
+    using DragDropPhoneApp.ViewModel;
 
     public partial class PageOfChoice : PhoneApplicationPage
     {
         public PageOfChoice()
         {
             InitializeComponent();
+            this.DataContext = App.DataContext;
         }
 
         private void Share_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
 
-        // TwitterApi.PostMessageToTwitter(App.DataContext.CurrentActivity.ActivityType.ToString());
             var activite = App.DataContext.CurrentActivity;
             byte[] imageBytes;
             using (MemoryStream ms = new MemoryStream())
@@ -39,6 +40,7 @@ namespace DragDropPhoneApp
                 imageBytes = ms.ToArray();
 
             }
+            App.DataContext.IsLoading = true;
             TaskFactory s =new TaskFactory();
             s.StartNew(
                 () =>
