@@ -478,10 +478,14 @@ namespace DragDropPhoneApp
                 route.Duration = routeDuration;
                 route.Length = routeLength;
                 route.UserName = App.DataContext.CurrentUser.Login;
+                var b = route.ActivityType.Image;
+                route.ActivityType.Image = null;
                 App.DataContext.CurrentActivity.Image = MapToBitMap();
                 App.DataContext.CurrentActivity.TimeStamp = DateTime.Now;
                 ApiService<Build.DataLayer.Model.Route>.SendPost(route);
-     
+
+
+                route.ActivityType.Image = b;
                 this.NavigationService.Navigate(new Uri("/PageOfChoice.xaml", UriKind.Relative));
             }
 

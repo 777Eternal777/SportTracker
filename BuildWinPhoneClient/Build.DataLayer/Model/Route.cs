@@ -29,7 +29,7 @@ namespace Build.DataLayer.Model
             get
             {
                 BitmapImage img = new BitmapImage();
-                string filename = @"\Images" + @"\" + this.ActivityType.ToString();
+                string filename = @"\Images" + @"\" + this.ActivityTypeString;
                 Stream stream = null;
                 using (var isoStore = IsolatedStorageFile.GetUserStoreForApplication())
                 {
@@ -46,7 +46,8 @@ namespace Build.DataLayer.Model
             }
 
         }
-
+        [JsonProperty]
+        public string ActivityTypeString { get; set; }
         [JsonProperty]
         public string UserName { get; set; }
         [JsonProperty]

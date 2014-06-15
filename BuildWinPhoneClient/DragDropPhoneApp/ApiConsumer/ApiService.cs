@@ -113,13 +113,8 @@
 
         public static void Login(string login, string pass)
         {
-            WebClient client = new WebClient();
-
-            HttpWebRequest myReq =
-                (HttpWebRequest)
-                WebRequest.Create(uriRoutesApi.OriginalString + string.Format("?login={0}&pass={1}", login, pass));
-
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(uriRoutesApi);
+          
+           
             StartWebRequest(uriUserApi.OriginalString + string.Format("?login={0}&pass={1}", login, pass), null);
         }
 

@@ -22,7 +22,7 @@
 
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock Text="BuildSeller" Style="{StaticResource PhoneTextNormalStyle}"/>
+            <TextBlock Text="SportTracker" Style="{StaticResource PhoneTextNormalStyle}"/>
 
             <TextBlock Text="Register" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
             <Button Content="Submit" Tap="Button_Tap"/>

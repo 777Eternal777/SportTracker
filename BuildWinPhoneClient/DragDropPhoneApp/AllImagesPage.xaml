@@ -123,9 +123,9 @@
     <Grid x:Name="LayoutRoot" Background="Transparent"
            d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel, IsDesignTimeCreatable=true}">
 
-        <phone:Pivot Title="Images" Name="pivot" Margin="-3, 0, 0, 0" >
+        <phone:Pivot Title="Activities" Name="pivot" Margin="-3, 0, 0, 0" >
 
-            <phone:PivotItem Header="Images">
+            <phone:PivotItem Header="Activities">
 
                 <phone:LongListSelector Name="ImagesList" Margin="13,-30,0,0" 
                                       

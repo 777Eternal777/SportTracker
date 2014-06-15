@@ -46,7 +46,7 @@ namespace DragDropPhoneApp
                 () =>
                     {
                         TwitterApi.PostMessageWithImageToTwitter(
-                            App.DataContext.CurrentActivity.ActivityType.ToString() + " "
+                            App.DataContext.CurrentActivity.ActivityType.Type.ToString() + " "
                             + App.DataContext.CurrentActivity.TimeStamp,
                           imageBytes);
                     });
