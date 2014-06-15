@@ -54,12 +54,8 @@
         public static Activity GetImage(string imgName)
         {
             DateTime start = new DateTime(2010, 1, 1);
-            ActivityType activityType;
-            var success = ActivityType.TryParse(imgName, out activityType);
-            if (!success)
-            {
-                activityType = ActivityType.Bicycle;
-            }
+            ActivityType activityType = new ActivityType { Type = imgName };
+           
             Activity imageData = new Activity { ActivityType = activityType, ImageSource = imgName, Title = imgName, TimeStamp = start };
 
             imageData.Image = FetchImage(imageData);
@@ -72,12 +68,8 @@
             DateTime start = new DateTime(2010, 1, 1);
             foreach (var imgName in GetImagesNamesList(true))
             {
-                ActivityType activityType;
-                var success = ActivityType.TryParse(imgName.Split('\\', '.')[2], out activityType);
-                if (!success)
-                {
-                    activityType = ActivityType.Bicycle;
-                }
+                ActivityType activityType = new ActivityType { Type = imgName.Split('\\', '.')[2] };
+               
                 Activity imageData = new Activity { ActivityType = activityType,ImageSource = imgName, Title = imgName, TimeStamp = start };
                 imageData.Image = FetchImage(imageData);
                 imageList.Add(imageData);

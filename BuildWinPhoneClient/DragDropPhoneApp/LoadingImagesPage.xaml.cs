@@ -5,6 +5,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
@@ -18,6 +20,8 @@
     using DragDropPhoneApp.Service;
 
     using Microsoft.Phone.Controls;
+
+    using Newtonsoft.Json;
 
     #endregion
 
@@ -48,31 +52,40 @@
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-         //   TwitterApi.PostMessageToTwitter("MessageToTwitter");
-
-
-
            
             new CustomProgressBar(this.ContentPanel);
+            Task.Factory.StartNew(
+                () =>
+                {
 
-            var valuesAsArray = Enum.GetValues(typeof(ActivityType)).Cast<ActivityType>().ToList();
-            var images = DataService.GetImagesNamesList(false);
-            if (images.Count >= valuesAsArray.Count)
-            {
-                this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
-                return;
-            }
+                    var das =
+                        ApiService<ActivityType>.DownloadJsonWebClient(
+                            ApiService<ActivityType>.uriRoutesApi.OriginalString);
 
-            var imagesToDownload = valuesAsArray.Where(c => !images.Any(v => v == c.ToString() + ".jpg"));
-            foreach (var value in imagesToDownload)
-            {
-                ApiService<Imag>.DownloadImage(value.ToString());
 
-                // Thread.Sleep(1500);
-            }
+                    var actList = JsonConvert.DeserializeObject<string[]>(das.Result);
+                    if (actList == null)
+                        this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+
+                    // new CustomProgressBar(this.ContentPanel);
+
+                    //var valuesAsArray = Enum.GetValues(typeof(ActivityType)).Cast<ActivityType>().ToList();
+                    var images = DataService.GetImagesNamesList(false);
+                   
+
+                    var imagesToDownload = actList.Where(c => !images.Any(v => v == c.ToString() ));
+                    foreach (var value in imagesToDownload)
+                    {
+                        ApiService<Imag>.DownloadImage(value.ToString());
+
+                        // Thread.Sleep(1500);
+                    }
+
+                });
 
             this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
         }
+
 
         #endregion
 
@@ -161,7 +174,7 @@
 
                 this.AnimateNext();
 
-             
+
             }
 
             #endregion
@@ -223,7 +236,7 @@
                                 (sender as ColorAnimation).RepeatBehavior = new RepeatBehavior(1.5);
                                 gradientStopAnimationStoryboard.Begin();
                                 asd = false;
-                                this.AnimateNext(); 
+                                this.AnimateNext();
                             }
                         }
                     };
@@ -242,26 +255,26 @@
 
                 this.textBox = new TextBlock
                                    {
-                                       Name = "TextBoxProgressBar", 
-                                       Height = 100, 
-                                       Margin = new Thickness(10, 375, 0, 0), 
-                                       VerticalAlignment = VerticalAlignment.Top, 
-                                       Width = 436, 
+                                       Name = "TextBoxProgressBar",
+                                       Height = 100,
+                                       Margin = new Thickness(10, 375, 0, 0),
+                                       VerticalAlignment = VerticalAlignment.Top,
+                                       Width = 436,
                                        TextAlignment = TextAlignment.Center
                                    };
 
                 this.textBox.Text = string.Format("{0} of {1}", this.imgDownloaded, 4);
                 var rect = new Rectangle
                                {
-                                   Name = "ProgressBarRect", 
-                                   Fill = new SolidColorBrush(Colors.Black), 
-                                   HorizontalAlignment = HorizontalAlignment.Left, 
-                                   Height = 100, 
-                                   Margin = new Thickness(10, 275, 0, 0), 
-                                   Stroke = new SolidColorBrush(Colors.White), 
-                                   VerticalAlignment = VerticalAlignment.Top, 
-                                   Width = 436, 
-                                   StrokeThickness = 10, 
+                                   Name = "ProgressBarRect",
+                                   Fill = new SolidColorBrush(Colors.Black),
+                                   HorizontalAlignment = HorizontalAlignment.Left,
+                                   Height = 100,
+                                   Margin = new Thickness(10, 275, 0, 0),
+                                   Stroke = new SolidColorBrush(Colors.White),
+                                   VerticalAlignment = VerticalAlignment.Top,
+                                   Width = 436,
+                                   StrokeThickness = 10,
                                    RadiusY = 1
                                };
 

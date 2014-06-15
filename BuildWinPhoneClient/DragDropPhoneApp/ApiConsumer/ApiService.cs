@@ -43,7 +43,7 @@
 
         private static int take = 1;
 
-        private static Uri uriRoutesApi = new Uri("http://localhost:61251/api/routesapi");
+        public static Uri uriRoutesApi = new Uri("http://localhost:61251/api/routesapi");
 
         private static Uri uriUserApi = new Uri("http://localhost:61251/api/userapi");
 
@@ -62,39 +62,39 @@
         }
 
         private static int imagesDownloaded = 0;
-        public static  void DownloadImage(string imgActivity)
+        public static void DownloadImage(string imgActivity)
         {
 
             WebClient client = new WebClient();
-           
+
             client.Headers["Accept"] = "application/json";
             client.DownloadStringCompleted += (sender, args) =>
             {
-                
-                    Imag imag =null;
-                    try
+
+                Imag imag = null;
+                try
+                {
+
+                    imag = JsonConvert.DeserializeObject<Imag>(args.Result);
+
+                }
+                catch (TargetInvocationException)
+                {
+                    imagesDownloaded++;
+                }
+
+                if (imag != null && imag.ActivityType.Image != null && imag.ActivityType.Image.Length != 0)
+                {
+                    DataService.SaveImage(imag.ActivityType.Type.ToString(), imag.ActivityType.Image);
+                    if (App.DataContext.DownloadImageUnderNumberCompleted.ContainsKey(imagesDownloaded))
                     {
-                    
-                         imag = JsonConvert.DeserializeObject<Imag>(args.Result);
-                  
-                    }
-                    catch(TargetInvocationException)
-                    {
+                        App.DataContext.DownloadImageUnderNumberCompleted[imagesDownloaded] = true;
                         imagesDownloaded++;
                     }
+                }
 
-                    if (imag != null && imag.Content != null && imag.Content.Length != 0)
-                    {
-                        DataService.SaveImage(imag.ActivityType.ToString(), imag.Content);
-                        if (App.DataContext.DownloadImageUnderNumberCompleted.ContainsKey(imagesDownloaded))
-                        {
-                            App.DataContext.DownloadImageUnderNumberCompleted[imagesDownloaded] = true;
-                            imagesDownloaded++;
-                        }
-                    }
+            };
 
-                };
-         
             client.DownloadStringAsync(
                 new Uri(uriRoutesApi.OriginalString + string.Format("?activity={0}", imgActivity)));
         }
@@ -106,7 +106,7 @@
 
             client.Headers["Accept"] = "application/json";
             client.DownloadStringCompleted += RouteDownloadedCallback;
-      
+
             client.DownloadStringAsync(
                 new Uri(uriRoutesApi.OriginalString + string.Format("?userName={0}", App.DataContext.CurrentUser.Login)));
         }
@@ -125,19 +125,19 @@
 
         public static void RouteDownloadedCallback(object s1, DownloadStringCompletedEventArgs e1)
         {
-         
+
 
             Task.Factory.StartNew(
                 () =>
+                {
+                    var realtys = JsonConvert.DeserializeObject<Route[]>(e1.Result);
+                    if (realtys != null)
                     {
-                        var realtys = JsonConvert.DeserializeObject<Route[]>(e1.Result);
-                        if (realtys != null)
-                        {
-                                Deployment.Current.Dispatcher.BeginInvoke(() => { App.DataContext.IsLoading = false; });
-                            
-                            App.DataContext.Routes = realtys.ToList();
-                        }
-                    });
+                        Deployment.Current.Dispatcher.BeginInvoke(() => { App.DataContext.IsLoading = false; });
+
+                        App.DataContext.Routes = realtys.ToList();
+                    }
+                });
         }
 
         public static void SendPost(T gizmo, bool isRealtApi = true)
@@ -178,19 +178,19 @@
                     (result.AsyncState as HttpWebRequest).EndGetResponse(result) as HttpWebResponse;
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-               
+
                     Deployment.Current.Dispatcher.BeginInvoke(
                         () =>
+                        {
+                            if (((PhoneApplicationFrame)Application.Current.RootVisual).DataContext is MainViewModel)
                             {
-                                if (((PhoneApplicationFrame)Application.Current.RootVisual).DataContext is MainViewModel)
-                                {
-                                    (((PhoneApplicationFrame)Application.Current.RootVisual).DataContext as
-                                     MainViewModel).IsLoading = false;
-                                }
+                                (((PhoneApplicationFrame)Application.Current.RootVisual).DataContext as
+                                 MainViewModel).IsLoading = false;
+                            }
 
-                                ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
-                                    new Uri("/AllImagesPage.xaml", UriKind.Relative)); //AllImagesPage
-                            });
+                            ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
+                                new Uri("/AllImagesPage.xaml", UriKind.Relative)); //AllImagesPage
+                        });
                 }
                 else
                 {
@@ -202,10 +202,10 @@
             {
                 Deployment.Current.Dispatcher.BeginInvoke(
                     () =>
-                        {
-                          
-                            MessageBox.Show("No user with such credentials");
-                        });
+                    {
+
+                        MessageBox.Show("No user with such credentials");
+                    });
             }
         }
         private static void FinishPingRequest(IAsyncResult result)
@@ -221,7 +221,7 @@
                         {
                             ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
                                     new Uri("/MainPage.xaml", UriKind.Relative));
-                          
+
                         });
                 }
                 else
@@ -232,7 +232,7 @@
             }
             catch (WebException e)
             {
-                
+
                 Deployment.Current.Dispatcher.BeginInvoke(
                     () =>
                     {
@@ -259,6 +259,40 @@
             request.BeginGetResponse(callback, request);
         }
 
+        public static Task<string> DownloadJsonWebClient(string url)
+        {
+            var tcs = new TaskCompletionSource<string>(); 
+            if (String.IsNullOrEmpty(url))
+            {
+                return null;
+            }
+          
+          
+
+                      
+                        WebClient client = new WebClient();
+
+                        client.DownloadStringCompleted += (s, e) =>
+                            {
+                                if (e.Error == null)
+                                {
+                                    tcs.SetResult(e.Result);
+                                }
+                                else
+                                {
+                                    tcs.SetException(e.Error);
+                                }
+                            };
+
+
+                        client.Headers["Accept"] = "application/json";
+
+
+                        client.DownloadStringAsync(new Uri(url));
+                  
+            return tcs.Task;
+            //    client.
+        }
         #endregion
     }
 }

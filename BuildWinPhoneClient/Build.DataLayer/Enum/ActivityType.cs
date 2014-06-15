@@ -6,11 +6,17 @@ using System.Threading.Tasks;
 
 namespace Build.DataLayer.Enum
 {
-    public enum ActivityType
+    using Newtonsoft.Json;
+
+    [JsonObject]
+    public class ActivityType 
     {
-        Bicycle,
-        Walk,
-        Skate,
-        RollerSkates
+        [JsonProperty]
+        public string Type { get; set; }
+        [JsonProperty]
+        public byte[] Image { get; set; }
+
+        [JsonProperty]
+        public DateTime TimeCreated { get; set; }
     }
 }
