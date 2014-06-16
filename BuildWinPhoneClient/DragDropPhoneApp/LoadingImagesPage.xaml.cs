@@ -5,6 +5,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.ServiceModel.Channels;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
@@ -53,7 +54,7 @@
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
 
-            new CustomProgressBarImprouved(this.ContentPanel);
+            new CustomProgressBar(this.ContentPanel);
             Task.Factory.StartNew(
                 () =>
                 {
@@ -83,7 +84,7 @@
 
                 });
 
-        this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+     this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
         }
 
 
@@ -475,7 +476,7 @@
                                 this.textBox.Text = string.Format("{0} of {1}", this.imgDownloaded, 4);
                                 (sender as ColorAnimation).AutoReverse = false;
 
-                                (sender as ColorAnimation).RepeatBehavior = new RepeatBehavior(1.5);
+                               // (sender as ColorAnimation).RepeatBehavior = new RepeatBehavior(1.75);
                                 gradientStopAnimationStoryboard.Begin();
                                 asd = false;
                                 this.AnimateNext();

@@ -262,7 +262,6 @@ namespace DragDropPhoneApp
             try
             {
                 TouchPoint tPoint = e.GetPrimaryTouchPoint(this.map1);
-
                 if (tPoint.Action == TouchAction.Down)
                 {
                     var marker = MakeDotMarker(this.map1.ConvertViewportPointToGeoCoordinate(tPoint.Position), false);
@@ -271,6 +270,8 @@ namespace DragDropPhoneApp
                     this.Start_ReverceGeoCoding(marker);
                     StartGeoQ();
                 }
+                
+             
             }
             catch (ArgumentException)
             {
@@ -307,9 +308,9 @@ namespace DragDropPhoneApp
 
                 this.map1.AddRoute(this.lastRoute);
                 this.map1.SetView(e.Result.BoundingBox);
-                routeLength = myRoute.LengthInMeters / 1000;
+                routeLength = myRoute.LengthInMeters;
                 MessageBox.Show(
-                    "Distance: " + (routeLength) + " km, Estimated traveltime: "
+                    "Distance: " + (routeLength / 1000) + " km, Estimated traveltime: "
                     + myRoute.EstimatedDuration);
                 routeDuration = myRoute.EstimatedDuration;
                 failedQueriesCount = 0;

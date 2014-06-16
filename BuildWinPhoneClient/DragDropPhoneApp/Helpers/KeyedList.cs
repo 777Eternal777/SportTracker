@@ -1,12 +1,11 @@
-﻿#region Using Directives
-
-
-
-#endregion
-namespace DragDropPhoneApp.Helpers
+﻿namespace DragDropPhoneApp.Helpers
 {
+    #region Using Directives
+
     using System.Collections.Generic;
     using System.Linq;
+
+    #endregion
 
     public class KeyedList<TKey, TItem> : List<TItem>
     {

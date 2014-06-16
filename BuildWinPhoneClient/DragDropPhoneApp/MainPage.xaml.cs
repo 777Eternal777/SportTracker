@@ -36,7 +36,7 @@
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            Indicator.setLoadingIndicator(this, "Loading");
+            Indicator.SetLoadingIndicator(this, "Loading");
         }
 
         private void Register_Click(object sender, RoutedEventArgs e)

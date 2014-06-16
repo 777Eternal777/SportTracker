@@ -28,7 +28,7 @@ namespace DragDropPhoneApp
 
         private void Share_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
-            Indicator.setLoadingIndicator(this, "Loggin in");
+            Indicator.SetLoadingIndicator(this, "Sending tweet");
             var activite = App.DataContext.CurrentActivity;
             byte[] imageBytes;
             using (MemoryStream ms = new MemoryStream())

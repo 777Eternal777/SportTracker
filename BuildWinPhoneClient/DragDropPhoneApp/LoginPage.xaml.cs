@@ -70,7 +70,7 @@ namespace DragDropPhoneApp
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
 
-            Indicator.setLoadingIndicator(this, "Loggin in");
+            Indicator.SetLoadingIndicator(this, "Loggin in");
             var user = this.userRepository.GetAll().OrderByDescending(b => b.LoginTime).FirstOrDefault();
 
             if (user == null)

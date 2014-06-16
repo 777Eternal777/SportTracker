@@ -11,27 +11,27 @@ namespace DragDropPhoneApp.Helpers
 
     using Microsoft.Phone.Shell;
 
-    public static  class Indicator
-  {
-      public static void setLoadingIndicator(Page page, string text)
-      {
-          var progressIndicator = SystemTray.ProgressIndicator;
-          if (progressIndicator != null)
-          {
-              return;
-          }
+    public static class Indicator
+    {
+        public static void SetLoadingIndicator(Page page, string text)
+        {
+            var progressIndicator = SystemTray.ProgressIndicator;
+            if (progressIndicator != null)
+            {
+                return;
+            }
 
-          progressIndicator = new ProgressIndicator();
+            progressIndicator = new ProgressIndicator();
 
-          SystemTray.SetProgressIndicator(page, progressIndicator);
+            SystemTray.SetProgressIndicator(page, progressIndicator);
 
-          Binding binding = new Binding("IsLoading") { Source = page.DataContext };
-          BindingOperations.SetBinding(progressIndicator, ProgressIndicator.IsVisibleProperty, binding);
+            Binding binding = new Binding("IsLoading") { Source = page.DataContext };
+            BindingOperations.SetBinding(progressIndicator, ProgressIndicator.IsVisibleProperty, binding);
 
-          binding = new Binding("IsLoading") { Source = page.DataContext };
-          BindingOperations.SetBinding(progressIndicator, ProgressIndicator.IsIndeterminateProperty, binding);
+            binding = new Binding("IsLoading") { Source = page.DataContext };
+            BindingOperations.SetBinding(progressIndicator, ProgressIndicator.IsIndeterminateProperty, binding);
 
-          progressIndicator.Text = text;
-      }
+            progressIndicator.Text = text;
+        }
     }
 }

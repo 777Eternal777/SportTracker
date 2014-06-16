@@ -29,12 +29,10 @@ namespace Build.DataLayer.Model
             get
             {
                 BitmapImage img = new BitmapImage();
-                string filename = @"\Images" + @"\" + this.ActivityTypeString;
+                string filename = @"\Images\"  + this.ActivityTypeString;
                 Stream stream = null;
                 using (var isoStore = IsolatedStorageFile.GetUserStoreForApplication())
                 {
-
-
                     if (isoStore.FileExists(filename))
                     {
                         stream = isoStore.OpenFile(filename, FileMode.Open, FileAccess.Read);

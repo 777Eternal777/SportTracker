@@ -69,9 +69,9 @@
                         imagesDownloaded++;
                     }
 
-                    if (imag != null && imag.ActivityType.Image != null && imag.ActivityType.Image.Length != 0)
+                    if (imag != null &&imag.Content.Length != 0)
                     {
-                        DataService.SaveImage(imag.ActivityType.Type.ToString(), imag.ActivityType.Image);
+                        DataService.SaveImage(imag.ActivityType.Type.ToString(), imag.Content);
                         if (App.DataContext.DownloadImageUnderNumberCompleted.ContainsKey(imagesDownloaded))
                         {
                             App.DataContext.DownloadImageUnderNumberCompleted[imagesDownloaded] = true;
@@ -146,6 +146,7 @@
             Task.Factory.StartNew(
                 () =>
                     {
+
                         var realtys = JsonConvert.DeserializeObject<Route[]>(e1.Result);
                         if (realtys != null)
                         {

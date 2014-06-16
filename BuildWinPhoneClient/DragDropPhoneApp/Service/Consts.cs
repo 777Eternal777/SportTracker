@@ -16,7 +16,6 @@ namespace DragDropPhoneApp.Service
 
         public static string ImageFolderSlash = "Images/";
 
-        public static Dictionary<ActivityType, string> activityImageNames = new Dictionary<ActivityType, string>();
         #endregion
     }
 

@@ -127,13 +127,13 @@
                 <StackPanel HorizontalAlignment="Center"  >
                 <StackPanel Orientation="Horizontal"  >
 
-                    <Image Source="{Binding Image}" Width="200" Height="200" Stretch="UniformToFill"  HorizontalAlignment="Left" >
+                    <Image Source="{Binding Image}" Width="200" Height="255" Stretch="Fill"  HorizontalAlignment="Left" >
                     <!--, Converter={StaticResource BooleanToVisibilityConverter}-->
                 </Image>
                     <StackPanel Orientation="Vertical" >
-
-                        <TextBlock Text="User Name:"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <TextBlock Text="{Binding UserName}"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                       <TextBlock Text="User Name:"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                           
+                            <TextBlock Text="{Binding UserName}"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
                    
                         <TextBlock Text="Length:"    Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -181,14 +181,5 @@
 
         </phone:Pivot>
     </Grid>
-    <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar Mode="Minimized" Opacity="1.0" IsMenuEnabled="True" IsVisible="True" >
-
-
-            <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem x:Name="Add_new" Text="Add new" Click="Add_new_Click" />
-            </shell:ApplicationBar.MenuItems>
-
-        </shell:ApplicationBar>
-    </phone:PhoneApplicationPage.ApplicationBar>
+  
 </phone:PhoneApplicationPage>

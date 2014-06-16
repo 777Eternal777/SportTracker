@@ -51,41 +51,15 @@
             this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));
         }
 
-        private void Add_new_Click(object sender, EventArgs e)
-        {
-         //   App.DataContext.CurrentRealty = new Realty();
-            App.DataContext.isInRealtyCreating = true;
-            this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));
-        }
+      
 
         private void BlogsLongListSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var sendr = sender as LongListSelector;
-            if (sendr == null)
-            {
-                return;
-            }
-
-            if (sendr.SelectedItem == null)
-            {
-                return;
-            }
-
-            var realt = sendr.SelectedItem as App;
-            if (realt == null)
-            {
-                return;
-            }
-
-         //   App.DataContext.CurrentRealty = realt;
-            sendr.SelectedItem = null;
-            App.DataContext.isInRealtyCreating = false;
-            this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));
         }
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            Indicator.setLoadingIndicator(this, "Loading realties");
+            Indicator.SetLoadingIndicator(this, "Loading realties");
         }
 
         private void SortBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
