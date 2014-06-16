@@ -54,5 +54,10 @@
         }
 
         #endregion
+
+        private void ApplicationBarMenuItem_Click(object sender, EventArgs e)
+        {
+            this.NavigationService.Navigate(new Uri("/RealtyList.xaml", UriKind.Relative));
+        }
     }
 }

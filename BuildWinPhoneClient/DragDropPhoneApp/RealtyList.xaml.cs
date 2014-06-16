@@ -46,14 +46,14 @@
 
         private void AddNew_Tap(object sender, GestureEventArgs e)
         {
-            App.DataContext.CurrentRealty = new Realty();
+           // App.DataContext.CurrentRealty = new Realty();
             App.DataContext.isInRealtyCreating = true;
             this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));
         }
 
         private void Add_new_Click(object sender, EventArgs e)
         {
-            App.DataContext.CurrentRealty = new Realty();
+         //   App.DataContext.CurrentRealty = new Realty();
             App.DataContext.isInRealtyCreating = true;
             this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));
         }
@@ -71,13 +71,13 @@
                 return;
             }
 
-            var realt = sendr.SelectedItem as Realty;
+            var realt = sendr.SelectedItem as App;
             if (realt == null)
             {
                 return;
             }
 
-            App.DataContext.CurrentRealty = realt;
+         //   App.DataContext.CurrentRealty = realt;
             sendr.SelectedItem = null;
             App.DataContext.isInRealtyCreating = false;
             this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));

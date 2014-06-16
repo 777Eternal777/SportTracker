@@ -15,6 +15,7 @@ namespace DragDropPhoneApp
     using System.Windows.Media.Imaging;
 
     using DragDropPhoneApp.ApiConsumer;
+    using DragDropPhoneApp.Helpers;
     using DragDropPhoneApp.ViewModel;
 
     public partial class PageOfChoice : PhoneApplicationPage
@@ -27,7 +28,7 @@ namespace DragDropPhoneApp
 
         private void Share_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
-
+            Indicator.setLoadingIndicator(this, "Loggin in");
             var activite = App.DataContext.CurrentActivity;
             byte[] imageBytes;
             using (MemoryStream ms = new MemoryStream())

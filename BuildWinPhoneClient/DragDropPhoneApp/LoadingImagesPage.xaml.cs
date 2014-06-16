@@ -83,7 +83,7 @@
 
                 });
 
-       //     this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+        this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
         }
 
 

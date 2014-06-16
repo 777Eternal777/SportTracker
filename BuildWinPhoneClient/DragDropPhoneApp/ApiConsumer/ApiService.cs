@@ -3,14 +3,12 @@
     #region Using Directives
 
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Net;
     using System.Reflection;
     using System.Runtime.Serialization.Json;
     using System.Text;
-    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
 
@@ -25,25 +23,28 @@
     using Newtonsoft.Json;
 
     #endregion
+
     public class Imag
     {
+        #region Fields
+
+        [JsonProperty]
+        public ActivityType ActivityType;
 
         [JsonProperty]
         public byte[] Content;
 
-        [JsonProperty]
-        public ActivityType ActivityType;
+        #endregion
     }
+
     internal static class ApiService<T>
         where T : class
     {
         #region Static Fields
 
-        private static int skip;
-
-        private static int take = 1;
-
         public static Uri uriRoutesApi = new Uri("http://localhost:61251/api/routesapi");
+
+        private static int imagesDownloaded;
 
         private static Uri uriUserApi = new Uri("http://localhost:61251/api/userapi");
 
@@ -51,53 +52,68 @@
 
         #region Public Methods and Operators
 
-        public static string PingHost(string uri)
-        {
-            //uri += "sadf/asdf/asdf/asdf";
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            request.Method = "GET";
-            AsyncCallback callback = FinishPingRequest;
-            request.BeginGetResponse(callback, request);
-            return "";
-        }
-
-        private static int imagesDownloaded = 0;
         public static void DownloadImage(string imgActivity)
         {
-
             WebClient client = new WebClient();
 
             client.Headers["Accept"] = "application/json";
             client.DownloadStringCompleted += (sender, args) =>
-            {
-
-                Imag imag = null;
-                try
                 {
-
-                    imag = JsonConvert.DeserializeObject<Imag>(args.Result);
-
-                }
-                catch (TargetInvocationException)
-                {
-                    imagesDownloaded++;
-                }
-
-                if (imag != null && imag.ActivityType.Image != null && imag.ActivityType.Image.Length != 0)
-                {
-                    DataService.SaveImage(imag.ActivityType.Type.ToString(), imag.ActivityType.Image);
-                    if (App.DataContext.DownloadImageUnderNumberCompleted.ContainsKey(imagesDownloaded))
+                    Imag imag = null;
+                    try
                     {
-                        App.DataContext.DownloadImageUnderNumberCompleted[imagesDownloaded] = true;
+                        imag = JsonConvert.DeserializeObject<Imag>(args.Result);
+                    }
+                    catch (TargetInvocationException)
+                    {
                         imagesDownloaded++;
                     }
-                }
 
-            };
+                    if (imag != null && imag.ActivityType.Image != null && imag.ActivityType.Image.Length != 0)
+                    {
+                        DataService.SaveImage(imag.ActivityType.Type.ToString(), imag.ActivityType.Image);
+                        if (App.DataContext.DownloadImageUnderNumberCompleted.ContainsKey(imagesDownloaded))
+                        {
+                            App.DataContext.DownloadImageUnderNumberCompleted[imagesDownloaded] = true;
+                            imagesDownloaded++;
+                        }
+                    }
+                };
 
             client.DownloadStringAsync(
                 new Uri(uriRoutesApi.OriginalString + string.Format("?activity={0}", imgActivity)));
         }
+
+        public static Task<string> DownloadJsonWebClient(string url)
+        {
+            var tcs = new TaskCompletionSource<string>();
+            if (string.IsNullOrEmpty(url))
+            {
+                return null;
+            }
+
+            WebClient client = new WebClient();
+
+            client.DownloadStringCompleted += (s, e) =>
+                {
+                    if (e.Error == null)
+                    {
+                        tcs.SetResult(e.Result);
+                    }
+                    else
+                    {
+                        tcs.SetException(e.Error);
+                    }
+                };
+
+            client.Headers["Accept"] = "application/json";
+
+            client.DownloadStringAsync(new Uri(url));
+
+            return tcs.Task;
+
+        }
+
         public static void GetRoutes()
         {
             Deployment.Current.Dispatcher.BeginInvoke(() => { App.DataContext.IsLoading = true; });
@@ -113,26 +129,31 @@
 
         public static void Login(string login, string pass)
         {
-          
-           
             StartWebRequest(uriUserApi.OriginalString + string.Format("?login={0}&pass={1}", login, pass), null);
+        }
+
+        public static string PingHost(string uri)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.Method = "GET";
+            AsyncCallback callback = FinishPingRequest;
+            request.BeginGetResponse(callback, request);
+            return string.Empty;
         }
 
         public static void RouteDownloadedCallback(object s1, DownloadStringCompletedEventArgs e1)
         {
-
-
             Task.Factory.StartNew(
                 () =>
-                {
-                    var realtys = JsonConvert.DeserializeObject<Route[]>(e1.Result);
-                    if (realtys != null)
                     {
-                        Deployment.Current.Dispatcher.BeginInvoke(() => { App.DataContext.IsLoading = false; });
+                        var realtys = JsonConvert.DeserializeObject<Route[]>(e1.Result);
+                        if (realtys != null)
+                        {
+                            Deployment.Current.Dispatcher.BeginInvoke(() => { App.DataContext.IsLoading = false; });
 
-                        App.DataContext.Routes = realtys.ToList();
-                    }
-                });
+                            App.DataContext.Routes = realtys.ToList();
+                        }
+                    });
         }
 
         public static void SendPost(T gizmo, bool isRealtApi = true)
@@ -165,44 +186,6 @@
 
         #region Methods
 
-        private static void FinishWebRequest(IAsyncResult result)
-        {
-            try
-            {
-                HttpWebResponse response =
-                    (result.AsyncState as HttpWebRequest).EndGetResponse(result) as HttpWebResponse;
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-
-                    Deployment.Current.Dispatcher.BeginInvoke(
-                        () =>
-                        {
-                            if (((PhoneApplicationFrame)Application.Current.RootVisual).DataContext is MainViewModel)
-                            {
-                                (((PhoneApplicationFrame)Application.Current.RootVisual).DataContext as
-                                 MainViewModel).IsLoading = false;
-                            }
-
-                            ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
-                                new Uri("/AllImagesPage.xaml", UriKind.Relative)); //AllImagesPage
-                        });
-                }
-                else
-                {
-                    Deployment.Current.Dispatcher.BeginInvoke(
-                        () => { MessageBox.Show("No user with such credentials"); });
-                }
-            }
-            catch (WebException e)
-            {
-                Deployment.Current.Dispatcher.BeginInvoke(
-                    () =>
-                    {
-
-                        MessageBox.Show("No user with such credentials");
-                    });
-            }
-        }
         private static void FinishPingRequest(IAsyncResult result)
         {
             try
@@ -213,27 +196,52 @@
                 {
                     Deployment.Current.Dispatcher.BeginInvoke(
                         () =>
-                        {
-                            ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
+                            {
+                                ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
                                     new Uri("/MainPage.xaml", UriKind.Relative));
-
-                        });
+                            });
                 }
                 else
                 {
-                    Deployment.Current.Dispatcher.BeginInvoke(
-                        () => { MessageBox.Show("Server offline"); });
+                    Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show("Server offline"); });
                 }
             }
             catch (WebException e)
             {
+                Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show("Server offline"); });
+            }
+        }
 
-                Deployment.Current.Dispatcher.BeginInvoke(
-                    () =>
-                    {
+        private static void FinishWebRequest(IAsyncResult result)
+        {
+            try
+            {
+                HttpWebResponse response =
+                    (result.AsyncState as HttpWebRequest).EndGetResponse(result) as HttpWebResponse;
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    Deployment.Current.Dispatcher.BeginInvoke(
+                        () =>
+                            {
+                                if (((PhoneApplicationFrame)Application.Current.RootVisual).DataContext is MainViewModel)
+                                {
+                                    (((PhoneApplicationFrame)Application.Current.RootVisual).DataContext as
+                                     MainViewModel).IsLoading = false;
+                                }
 
-                        MessageBox.Show("Server offline");
-                    });
+                                ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
+                                    new Uri("/AllImagesPage.xaml", UriKind.Relative)); // AllImagesPage
+                            });
+                }
+                else
+                {
+                    Deployment.Current.Dispatcher.BeginInvoke(
+                        () => { MessageBox.Show("No user with such credentials"); });
+                }
+            }
+            catch (WebException e)
+            {
+                Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show("No user with such credentials"); });
             }
         }
 
@@ -254,40 +262,6 @@
             request.BeginGetResponse(callback, request);
         }
 
-        public static Task<string> DownloadJsonWebClient(string url)
-        {
-            var tcs = new TaskCompletionSource<string>(); 
-            if (String.IsNullOrEmpty(url))
-            {
-                return null;
-            }
-          
-          
-
-                      
-                        WebClient client = new WebClient();
-
-                        client.DownloadStringCompleted += (s, e) =>
-                            {
-                                if (e.Error == null)
-                                {
-                                    tcs.SetResult(e.Result);
-                                }
-                                else
-                                {
-                                    tcs.SetException(e.Error);
-                                }
-                            };
-
-
-                        client.Headers["Accept"] = "application/json";
-
-
-                        client.DownloadStringAsync(new Uri(url));
-                  
-            return tcs.Task;
-            //    client.
-        }
         #endregion
     }
 }

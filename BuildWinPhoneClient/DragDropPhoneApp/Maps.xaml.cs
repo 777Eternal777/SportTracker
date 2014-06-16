@@ -75,10 +75,6 @@ namespace DragDropPhoneApp
 
             this.map1.ZoomLevelChanged += this.map1_ZoomLevelChanged;
 
-            //   this.AddResultToMap(
-            //    new GeoCoordinate(App.DataContext.CurrentRealty.MapPosX, App.DataContext.CurrentRealty.MapPosY),
-            //    new GeoCoordinate(App.DataContext.CurrentRealty.MapPosX + 1, App.DataContext.CurrentRealty.MapPosY + 1));
-
             this.geoRev = new ReverseGeocodeQuery();
             this.geoRev.QueryCompleted += this.geoRev_QueryCompleted;
 
@@ -87,13 +83,7 @@ namespace DragDropPhoneApp
             this.markerLayer = new MapLayer();
 
             this.map1.Layers.Add(this.markerLayer);
-            //   StartGeoLoc();
-            if (App.DataContext.isInRealtyCreating)
-            {
-                //   this.GetRouteBtn.Visibility = Visibility.Collapsed;
-                //   this.Submit.Visibility = Visibility.Visible;
-            }
-            AddPlusMinusButtons();
+           AddPlusMinusButtons();
         }
 
         #endregion
@@ -427,8 +417,6 @@ namespace DragDropPhoneApp
 
         private void Submit_Tap(object sender, GestureEventArgs e)
         {
-            App.DataContext.CurrentRealty.MapPosX = this.OriginMarker.GeoCoordinate.Latitude;
-            App.DataContext.CurrentRealty.MapPosY = this.OriginMarker.GeoCoordinate.Longitude;
             MessageBox.Show("accepted");
 
             this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));

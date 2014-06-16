@@ -139,5 +139,14 @@
 
         </phone:Pivot>
     </Grid>
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar Mode="Default" Opacity="1.0" IsMenuEnabled="True" IsVisible="True">
+       
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="My routes" Click="ApplicationBarMenuItem_Click"  />
+           
+            </shell:ApplicationBar.MenuItems>
 
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
 </phone:PhoneApplicationPage>

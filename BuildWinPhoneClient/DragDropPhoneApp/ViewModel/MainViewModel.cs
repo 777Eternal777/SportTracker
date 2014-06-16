@@ -24,7 +24,7 @@ namespace DragDropPhoneApp.ViewModel
         private List<Activity> phots;
         public Users CurrentUser { get; set; }
 
-        public List<Realty> realtys;
+       // public List<Realty> realtys;
 
         private bool isLoading;
         public bool isInRealtyCreating;
@@ -63,7 +63,7 @@ namespace DragDropPhoneApp.ViewModel
 
         public MainViewModel()
         {
-            this.Realtys = new List<Realty>();
+       //     this.Realtys = new List<Realty>();
             Routes = new List<Route>();
             this.CurrentUser = new Users
                                    {
@@ -84,7 +84,7 @@ namespace DragDropPhoneApp.ViewModel
 
         #region Public Properties
 
-        public Realty CurrentRealty { get; set; }
+     //   public Realty CurrentRealty { get; set; }
 
         public Route CurrentRoute { get; set; }
         public Activity CurrentActivity { get; set; }
@@ -171,7 +171,7 @@ namespace DragDropPhoneApp.ViewModel
             }
         }
 
-        public List<Realty> Realtys
+     /*   public List<Realty> Realtys
         {
             get
             {
@@ -195,7 +195,7 @@ namespace DragDropPhoneApp.ViewModel
                             this.NotifyPropertyChanged("GroupedRealtiesForSell");
                         });
             }
-        }
+        }*/
         
         public Dictionary<int, bool> DownloadImageUnderNumberCompleted = new Dictionary<int, bool>(); 
 

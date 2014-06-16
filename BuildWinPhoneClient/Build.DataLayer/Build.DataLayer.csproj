@@ -87,11 +87,9 @@
     <Compile Include="Enum\ActivityType.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Model\BaseImage.cs" />
-    <Compile Include="Model\BuildCategories.cs" />
     <Compile Include="Model\CurrentUser.cs" />
     <Compile Include="Model\Entity.cs" />
     <Compile Include="Model\Activity.cs" />
-    <Compile Include="Model\Realty.cs" />
     <Compile Include="Model\Route.cs" />
     <Compile Include="Model\Users.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

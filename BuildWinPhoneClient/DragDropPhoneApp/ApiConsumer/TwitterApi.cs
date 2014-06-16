@@ -29,6 +29,10 @@
 
         public static void PostMessageWithImageToTwitter(string message, byte[] activity)
         {
+            if (activity == null || activity.Length == 0)
+            {
+                return;
+            }
             var auth = new SingleUserAuthorizer
                            {
                                CredentialStore =
@@ -44,9 +48,7 @@
                            };
             TwitterContext tweetContext = new TwitterContext(auth);
 
-            byte[] imageBytes = activity;
-
-            var ds = tweetContext.TweetWithMediaAsync(message, false, imageBytes).Result;
+            var ds = tweetContext.TweetWithMediaAsync(message, false, activity).Result;
             if (ds != null)
             {
                 Deployment.Current.Dispatcher.BeginInvoke(
@@ -57,6 +59,16 @@
                             ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
                                 new Uri("/RealtyList.xaml", UriKind.Relative));
                         });
+            }
+            else
+            {
+                Deployment.Current.Dispatcher.BeginInvoke(
+                 () =>
+                 {
+                     App.DataContext.IsLoading = false;
+                     ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
+                         new Uri("/RealtyList.xaml", UriKind.Relative));
+                 });
             }
         }
 
