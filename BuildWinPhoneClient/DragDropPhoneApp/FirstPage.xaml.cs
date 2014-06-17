@@ -1,27 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿#region Using Directives
+
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
+
+using DragDropPhoneApp.ApiConsumer;
+
 using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
+
+#endregion
 
 namespace DragDropPhoneApp
 {
-    using DragDropPhoneApp.ApiConsumer;
-
     public partial class FirstPage : PhoneApplicationPage
     {
+        #region Constructors and Destructors
+
         public FirstPage()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
+
+        #endregion
+
+        #region Methods
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            ApiService<string>.PingHost("http://localhost:61251/api/routesapi");
+           
         }
+
+        #endregion
     }
 }

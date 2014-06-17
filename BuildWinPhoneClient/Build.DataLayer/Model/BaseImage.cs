@@ -1,14 +1,12 @@
 ﻿#region Using Directives
 
-
+using System;
+using System.Data.Linq.Mapping;
 
 #endregion
 
 namespace Build.DataLayer.Model
 {
-    using System;
-    using System.Data.Linq.Mapping;
-
     [Table]
     public class ImageCard
     {

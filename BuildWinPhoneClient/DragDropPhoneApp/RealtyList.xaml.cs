@@ -1,38 +1,31 @@
-﻿namespace DragDropPhoneApp
+﻿#region Using Directives
+
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Navigation;
+
+using Build.DataLayer.Model;
+
+using DragDropPhoneApp.ApiConsumer;
+using DragDropPhoneApp.Helpers;
+
+using Microsoft.Phone.Controls;
+
+using GestureEventArgs = System.Windows.Input.GestureEventArgs;
+
+#endregion
+
+namespace DragDropPhoneApp
 {
-    #region Using Directives
-
-    using System;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Navigation;
-
-    using Build.DataLayer.Model;
-
-    using DragDropPhoneApp.ApiConsumer;
-    using DragDropPhoneApp.Helpers;
-    using DragDropPhoneApp.ViewModel;
-
-    using Microsoft.Phone.Controls;
-
-    using GestureEventArgs = System.Windows.Input.GestureEventArgs;
-
-    #endregion
-
     public partial class RealtyList : PhoneApplicationPage
     {
-        #region Fields
-
-
-        #endregion
-
         #region Constructors and Destructors
 
         public RealtyList()
         {
             this.InitializeComponent();
             this.DataContext = App.DataContext;
-            App.DataContext.isInRealtyCreating = false;
         }
 
         #endregion
@@ -44,59 +37,10 @@
             ApiService<Route>.GetRoutes();
         }
 
-        private void AddNew_Tap(object sender, GestureEventArgs e)
-        {
-           // App.DataContext.CurrentRealty = new Realty();
-            App.DataContext.isInRealtyCreating = true;
-            this.NavigationService.Navigate(new Uri("/RealtyDetailsPage.xaml", UriKind.Relative));
-        }
-
-      
-
-        private void BlogsLongListSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-        }
-
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            Indicator.SetLoadingIndicator(this, "Loading realties");
+            Indicator.SetLoadingIndicator(this, "Loading routes");
         }
-
-        private void SortBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var sendr = sender as ListPicker;
-            if (sendr == null)
-            {
-                return;
-            }
-
-            if (sendr.SelectedIndex == 1)
-            {
-                App.DataContext.OrderBy = true;
-            }
-            else
-            {
-                App.DataContext.OrderBy = false;
-            }
-        }
-        private void Ascendng_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var sendr = sender as ListPicker;
-            if (sendr == null)
-            {
-                return;
-            }
-
-            if (sendr.SelectedIndex == 1)
-            {
-                App.DataContext.IsAscendingSorting = true;
-            }
-            else
-            {
-                App.DataContext.IsAscendingSorting = false;
-            }
-        }
-
         #endregion
     }
 }

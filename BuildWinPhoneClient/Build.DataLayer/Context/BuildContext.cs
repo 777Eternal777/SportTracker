@@ -1,20 +1,29 @@
-﻿#region Using statements
+﻿#region Using Directives
 
+using System.Data.Linq;
 
+using Build.DataLayer.Model;
 
 #endregion
 
 namespace Build.DataLayer.Context
 {
-    using System.Data.Linq;
-
-    using Build.DataLayer.Model;
-
     public class BuildContext : DataContext
     {
+        #region Constants
+
         private const string ConnectionString = "DataSource=isostore:/Build.sdf";
 
-        #region Constructor
+        #endregion
+
+        #region Fields
+
+        public Table<CurrentUser> CurrentUser;
+
+        #endregion
+
+        #region Constructors and Destructors
+
         public BuildContext()
             : this(ConnectionString)
         {
@@ -26,16 +35,9 @@ namespace Build.DataLayer.Context
             if (!this.DatabaseExists())
             {
                 this.CreateDatabase();
-             
             }
-
         }
-        
-        #endregion
 
-        #region Tables
-
-        public Table<CurrentUser> CurrentUser;
         #endregion
     }
 }

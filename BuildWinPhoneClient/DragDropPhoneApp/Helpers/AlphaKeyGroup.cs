@@ -1,18 +1,16 @@
 ﻿#region Using Directives
 
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 
+using Microsoft.Phone.Globalization;
 
 #endregion
 
 namespace DragDropPhoneApp.Helpers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Threading;
-
-    using Microsoft.Phone.Globalization;
-
     public class AlphaKeyGroup<T> : List<T>
     {
         #region Constants
@@ -44,9 +42,9 @@ namespace DragDropPhoneApp.Helpers
         }
 
         public static List<AlphaKeyGroup<T>> CreateGroups(
-            IEnumerable<T> items,
-            CultureInfo cultureInfo,
-            Func<T, string> keySelector,
+            IEnumerable<T> items, 
+            CultureInfo cultureInfo, 
+            Func<T, string> keySelector, 
             bool sort)
         {
             SortedLocaleGrouping slg = new SortedLocaleGrouping(cultureInfo);
@@ -54,13 +52,13 @@ namespace DragDropPhoneApp.Helpers
             if (items == null)
             {
                 return null;
-            } 
+            }
+
             int index = 0;
 
             foreach (T item in items)
             {
                 index++;
-              
 
                 if (index >= 0 && index < list.Count)
                 {

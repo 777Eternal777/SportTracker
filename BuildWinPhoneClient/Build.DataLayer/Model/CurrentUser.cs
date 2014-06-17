@@ -1,17 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#region Using Directives
+
+using System;
+using System.Data.Linq.Mapping;
+
+#endregion
 
 namespace Build.DataLayer.Model
 {
-    using System.Data.Linq.Mapping;
-
     [Table]
-   public class CurrentUser
+    public class CurrentUser
     {
+        #region Fields
+
+        [Column]
+        public string Login;
+
+        [Column]
+        public DateTime LoginTime;
+
+        [Column]
+        public string Password;
+
         private Guid id;
+
+        #endregion
+
+        #region Public Properties
+
         [Column(IsPrimaryKey = true, IsDbGenerated = true, CanBeNull = false, AutoSync = AutoSync.OnInsert)]
         public Guid Id
         {
@@ -25,12 +40,7 @@ namespace Build.DataLayer.Model
                 this.id = value;
             }
         }
-        [Column]
-        public string Login;
 
-        [Column]
-        public DateTime LoginTime;
-        [Column]
-        public string Password;
+        #endregion
     }
 }

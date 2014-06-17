@@ -1,28 +1,42 @@
-﻿namespace DragDropPhoneApp.ApiConsumer
+﻿#region Using Directives
+
+using System;
+using System.Windows;
+
+using Windows.Foundation.Metadata;
+
+using LinqToTwitter;
+
+using Microsoft.Phone.Controls;
+
+#endregion
+
+namespace DragDropPhoneApp.ApiConsumer
 {
-    #region Using Directives
-
-    using System;
-    using System.Windows;
-
-    using LinqToTwitter;
-
-    using Microsoft.Phone.Controls;
-
-    #endregion
-
     public static class TwitterApi
     {
         #region Static Fields
 
-        private static string APIsecret = "5eqgOqF1Ca2fUSL8MwZaL6F3GW5xlTKLEbHph46HUs0iLrPtL2";
-                              // Keep the "API secret" a secret. This key should never be human-readable in your application.
-        private static string AccesToken = "2558909828-qsFXEywYd2xjGo1b9pIANFvMjN2ANAOiSPsp2mp";
+        private static string APIsecret = ResourceStrings.Strings.APIsecret;
 
-        private static string AccesTokenSecret = "29shsDxbFt0Koy17jygoxWeLN7jzapiNLOvki90lDtxIf";
+        // Keep the "API secret" a secret. This key should never be human-readable in your application.
+        private static string AccesToken = ResourceStrings.Strings.AccesToken;
 
-        private static string ApiKey = "riMI9rvmpxdyQWFAJvxzUsusm";
+        private static string AccesTokenSecret = ResourceStrings.Strings.AccesTokenSecret;
 
+        private static string ApiKey = ResourceStrings.Strings.ApiKey;
+
+        private static SingleUserAuthorizer auth = new SingleUserAuthorizer
+        {
+            CredentialStore =
+                new SingleUserInMemoryCredentialStore
+                {
+                    ConsumerKey = ApiKey,
+                    ConsumerSecret = APIsecret,
+                    AccessToken = AccesToken,
+                    AccessTokenSecret = AccesTokenSecret
+                }
+        };
         #endregion
 
         #region Public Methods and Operators
@@ -33,19 +47,8 @@
             {
                 return;
             }
-            var auth = new SingleUserAuthorizer
-                           {
-                               CredentialStore =
-                                   new SingleUserInMemoryCredentialStore
-                                       {
-                                           ConsumerKey = ApiKey, 
-                                           ConsumerSecret =
-                                               APIsecret, 
-                                           AccessToken = AccesToken, 
-                                           AccessTokenSecret =
-                                               AccesTokenSecret
-                                       }
-                           };
+
+
             TwitterContext tweetContext = new TwitterContext(auth);
 
             var ds = tweetContext.TweetWithMediaAsync(message, false, activity).Result;
@@ -53,22 +56,22 @@
             {
                 Deployment.Current.Dispatcher.BeginInvoke(
                     () =>
-                        {
-                            App.DataContext.IsLoading = false;
-                            MessageBox.Show(ds.Text);
-                            ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
-                                new Uri("/RealtyList.xaml", UriKind.Relative));
-                        });
+                    {
+                        App.DataContext.IsLoading = false;
+                        MessageBox.Show(ds.Text);
+                        ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
+                            new Uri("/RealtyList.xaml", UriKind.Relative));
+                    });
             }
             else
             {
                 Deployment.Current.Dispatcher.BeginInvoke(
-                 () =>
-                 {
-                     App.DataContext.IsLoading = false;
-                     ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
-                         new Uri("/RealtyList.xaml", UriKind.Relative));
-                 });
+                    () =>
+                    {
+                        App.DataContext.IsLoading = false;
+                        ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
+                            new Uri("/RealtyList.xaml", UriKind.Relative));
+                    });
             }
         }
 

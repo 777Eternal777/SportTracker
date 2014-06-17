@@ -1,23 +1,19 @@
-﻿namespace DragDropPhoneApp.Service
+﻿#region Using Directives
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.IsolatedStorage;
+using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
+
+using Build.DataLayer.Enum;
+using Build.DataLayer.Model;
+
+#endregion
+
+namespace DragDropPhoneApp.Service
 {
-
-
-    #region Using Directives
-
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.IO.IsolatedStorage;
-    using System.Threading.Tasks;
-    using System.Windows.Media.Imaging;
-
-    using Build.DataLayer.Enum;
-    using Build.DataLayer.Model;
-
-    #endregion
-
-
-
     public static class DataService
     {
         #region Public Methods and Operators
@@ -55,8 +51,14 @@
         {
             DateTime start = new DateTime(2010, 1, 1);
             ActivityType activityType = new ActivityType { Type = imgName };
-           
-            Activity imageData = new Activity { ActivityType = activityType, ImageSource = imgName, Title = imgName, TimeStamp = start };
+
+            Activity imageData = new Activity
+                                     {
+                                         ActivityType = activityType, 
+                                         ImageSource = imgName, 
+                                         Title = imgName, 
+                                         TimeStamp = start
+                                     };
 
             imageData.Image = FetchImage(imageData);
             return imageData;
@@ -69,8 +71,14 @@
             foreach (var imgName in GetImagesNamesList(true))
             {
                 ActivityType activityType = new ActivityType { Type = imgName.Split('\\', '.')[2] };
-               
-                Activity imageData = new Activity { ActivityType = activityType,ImageSource = imgName, Title = imgName, TimeStamp = start };
+
+                Activity imageData = new Activity
+                                         {
+                                             ActivityType = activityType, 
+                                             ImageSource = imgName, 
+                                             Title = imgName, 
+                                             TimeStamp = start
+                                         };
                 imageData.Image = FetchImage(imageData);
                 imageList.Add(imageData);
             }
@@ -81,13 +89,13 @@
         public static List<string> GetImagesNamesList(bool withPath)
         {
             IsolatedStorageFile storeFile = IsolatedStorageFile.GetUserStoreForApplication();
-            string imageFolder = Consts.ImageFolder;
-            if (!storeFile.DirectoryExists(Consts.ImageFolderSlash))
+            string imageFolder =ResourceStrings.Strings.ImageFolder;
+            if (!storeFile.DirectoryExists(ResourceStrings.Strings.ImageFolderSlash))
             {
-                storeFile.CreateDirectory(Consts.ImageFolderSlash);
+                storeFile.CreateDirectory(ResourceStrings.Strings.ImageFolderSlash);
             }
 
-            List<string> fileList = new List<string>(storeFile.GetFileNames(Consts.ImageFolderSlash));
+            List<string> fileList = new List<string>(storeFile.GetFileNames(ResourceStrings.Strings.ImageFolderSlash));
             List<string> imgNameList = new List<string>();
             if (withPath)
             {
@@ -103,10 +111,6 @@
 
             return imgNameList;
         }
-
-        #endregion
-
-        #region Methods
 
         public static Stream LoadImage(string filename)
         {
@@ -125,44 +129,44 @@
                 }
                 else
                 {
-                    var file1 = Path.Combine(Consts.ImageFolder, filename);
+                    var file1 = Path.Combine(ResourceStrings.Strings.ImageFolder, filename);
                     if (isoStore.FileExists(file1))
                     {
                         stream = isoStore.OpenFile(filename, FileMode.Open, FileAccess.Read);
-
                     }
                 }
             }
 
             return stream;
         }
+
         public static bool SaveImage(string filename, byte[] byteContent)
         {
             if (filename == null || byteContent.Length == 0)
             {
                 throw new ArgumentException("one of parameters is null");
             }
-            string imageFolder = Consts.ImageFolder;
+
+            string imageFolder = ResourceStrings.Strings.ImageFolder;
 
             using (var isoStore = IsolatedStorageFile.GetUserStoreForApplication())
             {
-                if (!isoStore.DirectoryExists(Consts.ImageFolderSlash))
+                if (!isoStore.DirectoryExists(ResourceStrings.Strings.ImageFolderSlash))
                 {
-                    isoStore.CreateDirectory(Consts.ImageFolderSlash);
+                    isoStore.CreateDirectory(ResourceStrings.Strings.ImageFolderSlash);
                 }
+
                 var file1 = Path.Combine(imageFolder, filename);
-        
+
                 if (isoStore.FileExists(file1))
                 {
                     return false;
-
                 }
+
                 using (IsolatedStorageFileStream stream1 = isoStore.CreateFile(file1))
                 {
-
                     stream1.Write(byteContent, 0, byteContent.Length);
                 }
-
 
                 return true;
             }

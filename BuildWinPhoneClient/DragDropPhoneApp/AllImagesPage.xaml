@@ -129,7 +129,7 @@
 
                 <phone:LongListSelector Name="ImagesList" Margin="13,-30,0,0" 
                                       
-                                        ItemsSource="{Binding GroupedPhotos}"
+                                        ItemsSource="{Binding GroupedActivities}"
                                         ItemTemplate="{StaticResource ItemTemplate}"                     
                                         JumpListStyle="{StaticResource JumpListStyle}" 
                                         IsGroupingEnabled="True"

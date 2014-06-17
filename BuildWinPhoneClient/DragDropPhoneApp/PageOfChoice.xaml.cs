@@ -1,63 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
+﻿#region Using Directives
+
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
+
+using DragDropPhoneApp.ApiConsumer;
+using DragDropPhoneApp.Helpers;
+
 using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
+
+using GestureEventArgs = System.Windows.Input.GestureEventArgs;
+
+#endregion
 
 namespace DragDropPhoneApp
 {
-    using System.IO;
-    using System.Threading.Tasks;
-    using System.Windows.Media.Imaging;
-
-    using DragDropPhoneApp.ApiConsumer;
-    using DragDropPhoneApp.Helpers;
-    using DragDropPhoneApp.ViewModel;
-
     public partial class PageOfChoice : PhoneApplicationPage
     {
+        #region Constructors and Destructors
+
         public PageOfChoice()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DataContext = App.DataContext;
         }
 
-        private void Share_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        #endregion
+
+        #region Methods
+
+        private void Not_to_share_Tap(object sender, GestureEventArgs e)
+        {
+            this.NavigationService.Navigate(new Uri("/RealtyList.xaml", UriKind.Relative));
+        }
+
+        private void Share_Tap(object sender, GestureEventArgs e)
         {
             Indicator.SetLoadingIndicator(this, "Sending tweet");
             var activite = App.DataContext.CurrentActivity;
             byte[] imageBytes;
             using (MemoryStream ms = new MemoryStream())
             {
-                WriteableBitmap btmMap = new WriteableBitmap
-                    (activite.Image);
+                WriteableBitmap btmMap = new WriteableBitmap(activite.Image);
 
-                Extensions.SaveJpeg(btmMap, ms,
-                   activite.Image.PixelWidth, activite.Image.PixelHeight, 0, 100);
+                btmMap.SaveJpeg(ms, activite.Image.PixelWidth, activite.Image.PixelHeight, 0, 100);
                 imageBytes = ms.ToArray();
-
             }
+
             App.DataContext.IsLoading = true;
-            TaskFactory s =new TaskFactory();
+            TaskFactory s = new TaskFactory();
             s.StartNew(
                 () =>
                     {
                         TwitterApi.PostMessageWithImageToTwitter(
-                            App.DataContext.CurrentActivity.ActivityType.Type.ToString() + " "
-                            + App.DataContext.CurrentActivity.TimeStamp,
-                          imageBytes);
+                            App.DataContext.CurrentActivity.ActivityType.Type + " "
+                            + App.DataContext.CurrentActivity.TimeStamp, 
+                            imageBytes);
                     });
-
         }
 
-        private void Not_to_share_Tap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-
-            this.NavigationService.Navigate(new Uri("/RealtyList.xaml", UriKind.Relative));
-        }
+        #endregion
     }
 }

@@ -1,52 +1,40 @@
-﻿namespace DragDropPhoneApp.ApiConsumer
+﻿#region Using Directives
+
+using System;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Runtime.Serialization.Json;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+
+using Build.DataLayer.Model;
+
+using DragDropPhoneApp.ApiModel;
+using DragDropPhoneApp.ResourceStrings;
+using DragDropPhoneApp.Service;
+using DragDropPhoneApp.ViewModel;
+
+using Microsoft.Phone.Controls;
+
+using Newtonsoft.Json;
+
+#endregion
+
+namespace DragDropPhoneApp.ApiConsumer
 {
-    #region Using Directives
-
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Reflection;
-    using System.Runtime.Serialization.Json;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Windows;
-
-    using Build.DataLayer.Enum;
-    using Build.DataLayer.Model;
-
-    using DragDropPhoneApp.Service;
-    using DragDropPhoneApp.ViewModel;
-
-    using Microsoft.Phone.Controls;
-
-    using Newtonsoft.Json;
-
-    #endregion
-
-    public class Imag
-    {
-        #region Fields
-
-        [JsonProperty]
-        public ActivityType ActivityType;
-
-        [JsonProperty]
-        public byte[] Content;
-
-        #endregion
-    }
-
     internal static class ApiService<T>
         where T : class
     {
         #region Static Fields
 
-        public static Uri uriRoutesApi = new Uri("http://localhost:61251/api/routesapi");
+        public static Uri uriRoutesApi = new Uri(Strings.uriRoutesApi);
 
         private static int imagesDownloaded;
 
-        private static Uri uriUserApi = new Uri("http://localhost:61251/api/userapi");
+        private static Uri uriUserApi = new Uri(Strings.uriUserApi);
 
         #endregion
 
@@ -59,25 +47,20 @@
             client.Headers["Accept"] = "application/json";
             client.DownloadStringCompleted += (sender, args) =>
                 {
-                    Imag imag = null;
-                    try
-                    {
-                        imag = JsonConvert.DeserializeObject<Imag>(args.Result);
-                    }
-                    catch (TargetInvocationException)
-                    {
-                        imagesDownloaded++;
-                    }
+                    DownloadedImag imag =  JsonConvert.DeserializeObject<DownloadedImag>(args.Result);
 
-                    if (imag != null &&imag.Content.Length != 0)
+                    //   catch (TargetInvocationException)
+
+
+                    if (imag != null && imag.Content.Length != 0)
                     {
                         DataService.SaveImage(imag.ActivityType.Type.ToString(), imag.Content);
                         if (App.DataContext.DownloadImageUnderNumberCompleted.ContainsKey(imagesDownloaded))
                         {
                             App.DataContext.DownloadImageUnderNumberCompleted[imagesDownloaded] = true;
-                            imagesDownloaded++;
                         }
                     }
+                    imagesDownloaded++;
                 };
 
             client.DownloadStringAsync(
@@ -111,7 +94,6 @@
             client.DownloadStringAsync(new Uri(url));
 
             return tcs.Task;
-
         }
 
         public static void GetRoutes()
@@ -145,16 +127,15 @@
         {
             Task.Factory.StartNew(
                 () =>
+                {
+                    var realtys = JsonConvert.DeserializeObject<Route[]>(e1.Result);
+                    if (realtys != null)
                     {
+                        Deployment.Current.Dispatcher.BeginInvoke(() => { App.DataContext.IsLoading = false; });
 
-                        var realtys = JsonConvert.DeserializeObject<Route[]>(e1.Result);
-                        if (realtys != null)
-                        {
-                            Deployment.Current.Dispatcher.BeginInvoke(() => { App.DataContext.IsLoading = false; });
-
-                            App.DataContext.Routes = realtys.ToList();
-                        }
-                    });
+                        App.DataContext.Routes = realtys.ToList();
+                    }
+                });
         }
 
         public static void SendPost(T gizmo, bool isRealtApi = true)
@@ -197,10 +178,10 @@
                 {
                     Deployment.Current.Dispatcher.BeginInvoke(
                         () =>
-                            {
-                                ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
-                                    new Uri("/MainPage.xaml", UriKind.Relative));
-                            });
+                        {
+                            ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
+                                new Uri("/MainPage.xaml", UriKind.Relative));
+                        });
                 }
                 else
                 {
@@ -223,16 +204,18 @@
                 {
                     Deployment.Current.Dispatcher.BeginInvoke(
                         () =>
+                        {
+                            var viewModel =
+                                (((PhoneApplicationFrame)Application.Current.RootVisual).DataContext as
+                                 MainViewModel);
+                            if (viewModel != null)
                             {
-                                if (((PhoneApplicationFrame)Application.Current.RootVisual).DataContext is MainViewModel)
-                                {
-                                    (((PhoneApplicationFrame)Application.Current.RootVisual).DataContext as
-                                     MainViewModel).IsLoading = false;
-                                }
+                                viewModel.IsLoading = false;
+                            }
 
-                                ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
-                                    new Uri("/AllImagesPage.xaml", UriKind.Relative)); // AllImagesPage
-                            });
+                            ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(
+                                new Uri("/AllImagesPage.xaml", UriKind.Relative));
+                        });
                 }
                 else
                 {

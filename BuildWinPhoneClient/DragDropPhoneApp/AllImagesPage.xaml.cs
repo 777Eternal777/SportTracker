@@ -1,19 +1,19 @@
-﻿namespace DragDropPhoneApp
+﻿#region Using Directives
+
+using System;
+using System.Windows;
+using System.Windows.Controls;
+
+using Build.DataLayer.Model;
+
+using DragDropPhoneApp.Service;
+
+using Microsoft.Phone.Controls;
+
+#endregion
+
+namespace DragDropPhoneApp
 {
-    #region Using Directives
-
-    using System;
-    using System.Windows;
-    using System.Windows.Controls;
-
-    using Build.DataLayer.Model;
-
-    using DragDropPhoneApp.Service;
-
-    using Microsoft.Phone.Controls;
-
-    #endregion
-
     public partial class AllImagesPage : PhoneApplicationPage
     {
         #region Constructors and Destructors
@@ -27,6 +27,11 @@
         #endregion
 
         #region Methods
+
+        private void ApplicationBarMenuItem_Click(object sender, EventArgs e)
+        {
+            this.NavigationService.Navigate(new Uri("/RealtyList.xaml", UriKind.Relative));
+        }
 
         private void ImagesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -50,14 +55,9 @@
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            App.DataContext.photos = DataService.GetImages().Result;
+            App.DataContext.Activities = DataService.GetImages().Result;
         }
 
         #endregion
-
-        private void ApplicationBarMenuItem_Click(object sender, EventArgs e)
-        {
-            this.NavigationService.Navigate(new Uri("/RealtyList.xaml", UriKind.Relative));
-        }
     }
 }

@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#region Using Directives
+
+using System.Windows.Controls;
+using System.Windows.Data;
+
+using Microsoft.Phone.Shell;
+
+#endregion
 
 namespace DragDropPhoneApp.Helpers
 {
-    using System.Windows.Controls;
-    using System.Windows.Data;
-
-    using Microsoft.Phone.Shell;
-
     public static class Indicator
     {
+        #region Public Methods and Operators
+
         public static void SetLoadingIndicator(Page page, string text)
         {
             var progressIndicator = SystemTray.ProgressIndicator;
@@ -33,5 +33,7 @@ namespace DragDropPhoneApp.Helpers
 
             progressIndicator.Text = text;
         }
+
+        #endregion
     }
 }

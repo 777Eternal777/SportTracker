@@ -1,24 +1,20 @@
-﻿namespace DragDropPhoneApp
+﻿#region Using Directives
+
+using System;
+using System.Windows;
+
+using DragDropPhoneApp.Helpers;
+
+using Microsoft.Phone.Controls;
+
+#endregion
+
+namespace DragDropPhoneApp
 {
-    #region Using Directives
-
-    using System;
-    using System.Windows;
-
-    using DragDropPhoneApp.Helpers;
-    using DragDropPhoneApp.Service;
-    using DragDropPhoneApp.ViewModel;
-
-    using Microsoft.Phone.Controls;
-
-    #endregion
-
     public partial class MainPage : PhoneApplicationPage
     {
-      
-
         #region Constructors and Destructors
-       
+
         public MainPage()
         {
             this.InitializeComponent();
